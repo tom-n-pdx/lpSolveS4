@@ -27,6 +27,7 @@ validlpSolverObject <- function(object){
     if (length(dim(object@constraints)) != 2){
       error_msg <- paste0(error_msg, "Slot constraints dimensions != 2; ")
     } else {
+
       # Check vars that must match ncols in constraints
       n_col <- ncol(object@constraints)
 
@@ -38,30 +39,23 @@ validlpSolverObject <- function(object){
       }
 
       # Check vars that must match nrows in constraints
-      n_row <- ncol(object@constraints)
+      n_row <- nrow(object@constraints)
 
       for (value in c("sense", "rhs")){                   # Check that vars are length 0, 1 or ncol
         n <-length(slot(object, value))
         if (n > 0 && n!= 1 && n != n_row){
-          error_msg <- paste0(error_msg, "Slot ", value, " length is not = 1 or ncols in constraints; ")
+          error_msg <- paste0(error_msg, "Slot ", value, " length is not = 1 or nrows in constraints; ")
         }
       }
     }
-
   }
 
+  # Check Character values with limited values
+  if (length(object@modelsense) > 0 && !object@modelsense %in% c("min", "max")){
+    error_msg <- paste0(error_msg, "modelsense Not min or max; ")
+  }
 
-
-
-
-#   # Check Character values with limited values
-#   if (length(object@modelsense) > 0 &&
-#       ! object@modelsense %in% c("min", "max")){
-#     return("modelsense Not min or max")
-#   }
-#
-
-  sense_legal.l <- c("<=", "==", ">=", "")
+  sense_legal.l <- c("<=", "=", ">=", "")
   if (length(object@sense) > 0){
     for (i in 1:length(object@sense)){
       if (! object@sense[i] %in% sense_legal.l){
@@ -116,32 +110,110 @@ setMethod("summary", signature(object = "lpSolver"),
 #
 # Method Print
 # use getGeneric("print") to get args list to match
-
+#
 lpSolverPrint <- function(x, ...){
+  object <- x
 
-  cat("Print LpSolve Oh Boy\n")
+  cat("lpSolver: ", object@modelname, "\n")
+  print(object@constraints)
+  for(slot_name in slotNames(object)){
+    temp <- slot(object, slot_name)
+    if (length(temp) > 0)
+      cat(slot_name, "\t", temp, "\n")
+  }
 
 }
-#setGeneric("print")
 
 setMethod("print", signature(x = "lpSolver"),
   lpSolverPrint
 )
 
 
-lpq_good <- new("lpSolver",
-                modelname = "DEA CCR",
-                constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
-                rhs = c(5, 6),
-                obj = c(0, 2)
+#
+# Method solve
+# use getGeneric("print") to get args list to match
+#
+lpSolverSolve <- function(a){
+  require(lpSolveAPI)
+  object <- a
+  validObject(object)
+
+  cat("lpSolver: solve\n")
+  nrow <- nrow(object@constraints)
+  ncol <- ncol(object@constraints)
+  lprec <- make.lp(nrow=nrow, ncol=ncol)
+
+  if(length(object@constraints) > 0){
+    for (i in 1:ncol(object@constraints)){
+      set.column(lprec, i, object@constraints[,i])
+    }
+  }
+
+  for(slot in c("modelname", "modelsense","obj", "lb", "ub", "sense", "rhs")){
+    value <- slot(object, slot)
+    if (length(value) > 0){
+      switch(slot,
+             modelname    = name.lp(lprec, name=value),
+             modelsense   = lp.control(lprec, sense=value),
+
+             obj          = set.objfn(lprec, rep_len(value, ncol)),
+             lb           = set.bounds(lprec, lower = rep_len(value, ncol)),
+             ub           = set.bounds(lprec, upper = rep_len(value, ncol)),
+
+             sense        = set.constr.type(lprec, rep_len(value, nrow)),
+             rhs          = set.constr.value(lprec, rep_len(value, nrow))
+      )
+    }
+  }
+
+  #
+  # Solve
+  #
+  print(lprec)
+  result <- list()
+  result$status     <- solve(lprec)
+  result$variables  <- get.variables(lprec)
+
+  return(result)
+}
+
+setGeneric("solve")
+
+setMethod("solve", signature(a = "lpSolver"),
+          lpSolverSolve
 )
 
+# lpq_good <- new("lpSolver",
+#                 modelname = "DEA CCR",
+#                 constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
+#                 rhs     = 7,
+#                 sense   = c(">=", ">="),
+#                 obj     = c(0, 2)
+# )
 
-lpq_bad <- new("lpSolver")
-lpq_bad@modelname     <- "bad"
-lpq_bad@constraints   <- matrix(c(1,1,0,0,1,1), nrow=2, byrow=T)
-# lpq_bad@obj         <- c(1,1,2)  # Bad - required
-lpq_bad@modelsense    <- "max"
-lpq_bad@rhs           <- c(1)
-lpq_bad@sense         <- c("<=", "xx")  # Bad - should be 1 or 3, xx illegal
-validObject(lpq_bad, test = TRUE)
+
+# lpq_bad <- new("lpSolver")
+# lpq_bad@modelname     <- "bad"
+# lpq_bad@constraints   <- matrix(c(1,1,0,0,1,1), nrow=2, byrow=T)
+# # lpq_bad@obj         <- c(1,1,2)  # Bad - required
+# lpq_bad@modelsense    <- "max"
+# lpq_bad@rhs           <- c(1)
+# lpq_bad@sense         <- c("<=", "xx")  # Bad - should be 1 or 3, xx illegal
+# validObject(lpq_bad, test = TRUE)
+
+
+# lpq_bad1 <- new("lpSolver",
+#                 modelname = "bad1",
+#                 constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
+#                 rhs = c(5, 6),
+#                 obj = c(0, 2),
+#                 sense = c("XX")
+# )
+
+# lpq_bad2 <- new("lpSolver",
+#                 modelname = "bad2",
+#                 constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
+#                 rhs = c(5, 6),
+#                 obj = c(0, 2),
+#                 modelsense = "XX"
+# )
