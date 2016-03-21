@@ -3,7 +3,7 @@
 # use getGeneric("print") to get args list to match
 #
 lpSolverSolve <- function(a){
-  require(lpSolveAPI)
+  # require(lpSolveAPI)
   object <- a
   validObject(object)
 

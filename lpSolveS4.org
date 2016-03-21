@@ -5,7 +5,7 @@ lpSolveS4 ToDo
 
 ** TODO [#B] TestThis Tests
 
-** Doccumentation with pandoc?
+** TODO [#B] Doccumentation with pandoc?
 
 
 
