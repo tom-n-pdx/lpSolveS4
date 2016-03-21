@@ -1,8 +1,7 @@
 #
 # Simple Tests to check if working
 #
-source("lpSolve.R")
-
+require("lpSolveS4")
 
 lpq_good <- new("lpSolve",
                 modelname = "DEA CCR",
