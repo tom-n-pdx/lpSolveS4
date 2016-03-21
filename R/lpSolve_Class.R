@@ -46,8 +46,8 @@ validlpSolveObject <- function(object){
 
   # If constraints defined make sure is 2 dimensions
   if (length(object@constraints) > 0){
-    if (length(dim(object@constraints)) != 2){
-      error_msg <- paste0(error_msg, "Slot constraints dimensions != 2; ")
+    if (!is.numeric(object@constraints) || length(dim(object@constraints)) != 2){
+      error_msg <- paste0(error_msg, "Slot constraints must be numeric with dimensions = 2; ")
     } else {
 
       # Check vars that must match ncols in constraints
