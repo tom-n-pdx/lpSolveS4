@@ -9,7 +9,7 @@ require(methods)
 # lpSolver Class
 #
 #
-
+sense_legal.l <- c("", "<=", ">=", "=")
 
 validlpSolverObject <- function(object){
 
@@ -55,7 +55,6 @@ validlpSolverObject <- function(object){
     error_msg <- paste0(error_msg, "modelsense Not min or max; ")
   }
 
-  sense_legal.l <- c("<=", "=", ">=", "")
   if (length(object@sense) > 0){
     for (i in 1:length(object@sense)){
       if (! object@sense[i] %in% sense_legal.l){
@@ -160,7 +159,9 @@ lpSolverSolve <- function(a){
              lb           = set.bounds(lprec, lower = rep_len(value, ncol)),
              ub           = set.bounds(lprec, upper = rep_len(value, ncol)),
 
-             sense        = set.constr.type(lprec, rep_len(value, nrow)),
+             sense        = set.constr.type(lprec,
+                                            rep_len(match(value, sense_legal.l) - 1,
+                                                    nrow)),
              rhs          = set.constr.value(lprec, rep_len(value, nrow))
       )
     }
@@ -169,7 +170,7 @@ lpSolverSolve <- function(a){
   #
   # Solve
   #
-  print(lprec)
+  #print(lprec)
   result <- list()
   result$status     <- solve(lprec)
   result$variables  <- get.variables(lprec)
