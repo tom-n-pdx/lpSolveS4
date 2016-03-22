@@ -22,17 +22,34 @@ lpSolverSolve <- function(a){
     value <- slot(object, slot)
     if (length(value) > 0){
       switch(slot,
-             modelname    = name.lp(lprec, name=value),
-             modelsense   = lp.control(lprec, sense=value),
+             modelname    = {
+               name.lp(lprec, name=value)
+             },
+             modelsense   = {
+               lp.control(lprec, sense=value)
+             },
 
-             obj          = set.objfn(lprec, rep_len(value, ncol)),
-             lb           = set.bounds(lprec, lower = rep_len(value, ncol)),
-             ub           = set.bounds(lprec, upper = rep_len(value, ncol)),
+             obj = {
+               set.objfn(lprec, rep_len(value, ncol))
+             },
 
-             sense        = set.constr.type(lprec,
-                                            rep_len(match(value, sense_legal.l) - 1,
-                                                    nrow)),
-             rhs          = set.constr.value(lprec, rep_len(value, nrow))
+             lb = {
+               set.bounds(lprec, lower = rep_len(value, ncol))
+             },
+
+             ub = {
+               set.bounds(lprec, upper = rep_len(value, ncol))
+             },
+
+             sense = {
+               set.constr.type(lprec,
+                               rep_len(match(value, sense_legal.l) - 1,
+                                       nrow))
+             },
+
+             rhs = {
+               set.constr.value(lprec, rep_len(value, nrow))
+             }
       )
     }
   }

@@ -8,7 +8,7 @@ context("lpSolve solve using lpSolveAPI")
 test_that("quick check works", {
 
   lpq_good <- new("lpSolve",
-                  modelname = "DEA CCR",
+                  # modelname = "DEA CCR",
                   constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
                   rhs     = 7,
                   sense   = c(">=", ">="),
