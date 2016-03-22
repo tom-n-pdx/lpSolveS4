@@ -2,6 +2,16 @@
 # Method solve for lpSolver Class using lpSolveAPI to lp_solve Program
 # use getGeneric("print") to get args list to match
 #
+
+#' Solve method for lpSolve Object
+#'
+#' Using the lpSolveAPI package solves a lpSolve Object
+#' @param a lpSolve object to be solved
+#'
+#' @export
+#' @import package lpSolveAPI
+#'
+
 lpSolverSolve <- function(a){
   # require(lpSolveAPI)
   object <- a
