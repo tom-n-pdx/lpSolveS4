@@ -9,7 +9,7 @@
 #' @param a lpSolve object to be solved
 #'
 #' @export
-#' @import package lpSolveAPI
+#' @import lpSolveAPI
 #'
 
 lpSolverSolve <- function(a){

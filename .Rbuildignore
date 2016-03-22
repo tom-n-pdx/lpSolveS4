@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
+^jig$
+^Makefile$
+^docs-solver-api$

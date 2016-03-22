@@ -10,10 +10,26 @@
 #
 sense_legal.l <- c("", "<=", ">=", "=")
 
-
 #
 # lpSolve Class - Generic S4 OOP interface to solver
 #
+#' \code{lpSolve} Class Definition
+#'
+#' @slot modelname name for model, type character (optional)
+#' @slot modelsense model sense. legal values are \code{min, max} (optional: default max)
+#' @slot constraints model constraints. numeric matrix
+#' @slot obj objective function. type numeric. length is 1 or ncols of constraints
+#' @slot ub upper bound. type numeric. length is 1 or ncols of constraints (optional:
+#'        default value is Inf)
+#' @slot lb lower bound. type numeric. length is 1 or ncols of constraints (optional:
+#'        default valueis 0)
+#' @slot rhs RHS constraints. type numeric. length is 1 or nrowss of constraints
+#' @slot sense sense of constraints. legal values are \code{"<=", "=", ">=", ""} Blank
+#'        sets constraint to be free. length is 1 or nrowss of constraints
+#'
+#' @exportClass lpSolve
+#'
+
 setClass("lpSolve",
          slots = c(
            modelname = "character",           # optional
