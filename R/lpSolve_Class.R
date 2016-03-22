@@ -1,7 +1,7 @@
 #
 #  lpSolve Class as frontend for lpSolveAPI
 #
-#require(methods)
+require(methods)
 
 #
 #
@@ -28,7 +28,7 @@ sense_legal.l <- c("", "<=", ">=", "=")
 #'        sets constraint to be free. length is 1 or nrowss of constraints
 #'
 #' @exportClass lpSolve
-#'
+#' @import methods
 
 setClass("lpSolve",
          slots = c(
@@ -115,6 +115,12 @@ setValidity("lpSolve", validlpSolveObject)
 #
 # Method Summary
 #
+#' Summary
+#'
+#' Summary method lpSolve Object
+#'
+#' @export
+#'
 lpSolveSummary <- function(object){
 
   cat("lpSolve: ", object@modelname, "\n")
@@ -123,9 +129,10 @@ lpSolveSummary <- function(object){
   }
 }
 
+#' @export
 setGeneric("summary")
 
-setMethod("summary", signature(object = "lpSolve"),
+setMethod("summary", signature("lpSolve"),
   lpSolveSummary
 )
 
@@ -134,10 +141,16 @@ setMethod("summary", signature(object = "lpSolve"),
 # Method Print
 # use getGeneric("print") to get args list to match
 #
+#' Print
+#'
+#' Print method lpSolve Object
+#'
+#' @export
+#'
 lpSolvePrint <- function(x, ...){
   object <- x
 
-  cat("lpSolve: ", object@modelname, "\n")
+  cat("lpSolve print: ", object@modelname, "\n")
   print(object@constraints)
   for(slot_name in slotNames(object)){
     temp <- slot(object, slot_name)
@@ -146,6 +159,9 @@ lpSolvePrint <- function(x, ...){
   }
 
 }
+
+#' @export
+setGeneric("print")
 
 setMethod("print", signature(x = "lpSolve"),
   lpSolvePrint

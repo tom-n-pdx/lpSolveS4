@@ -17,7 +17,7 @@ lpSolverSolve <- function(a){
   object <- a
   validObject(object)
 
-  cat("lpSolver: solve\n")
+  # cat("lpSolver: solve\n")
   nrow <- nrow(object@constraints)
   ncol <- ncol(object@constraints)
   lprec <- make.lp(nrow=nrow, ncol=ncol)
@@ -33,11 +33,10 @@ lpSolverSolve <- function(a){
     if (length(value) > 0){
       switch(slot,
              modelname    = {
-               name.lp(lprec, name=value)
-             },
+               name.lp(lprec, name=value)},
+
              modelsense   = {
-               lp.control(lprec, sense=value)
-             },
+               lp.control(lprec, sense=value)},
 
              obj = {
                set.objfn(lprec, rep_len(value, ncol))

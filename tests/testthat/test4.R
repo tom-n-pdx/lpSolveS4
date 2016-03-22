@@ -14,26 +14,13 @@ test_that("quick check works", {
                   sense   = c(">=", ">="),
                   obj     = c(0, 2)
   )
-  print(summary(lpq_good))
-  print(lpq_good)
+  # print(summary(lpq_good))
+  # print(lpq_good)
   validObject(lpq_good)
   result <- solve(lpq_good)
-  print(result)
+  #print(result)
+  expect_equivalent(result$variables, c(7, 0))
 
 })
-
-
-context("lpSolve summary")
-
-test_that("check summary", {
-
-  Y <- new("lpSolve")
-  Y@constraints <- array(0, c(2,3))
-  Y@obj         <- c(1, 2, 3)
-  Y@rhs         <- c(1, 2)
-  summary(Y)
-
-})
-
 
 
