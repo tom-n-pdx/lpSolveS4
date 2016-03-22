@@ -14,7 +14,7 @@ CODE = lpSolve_Class.R  lpSolve_Solve_lpSolveAPI.R
 all:
 
 list:
-	$(PRINT) $(CODE) | ps2pdf - > list-code.pdf
+	cd R && $(PRINT) $(CODE) | ps2pdf - > ../list-code.pdf
 
 clean:
 	rm -f list*.pdf
