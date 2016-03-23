@@ -2,7 +2,7 @@
 # Test legal values
 # To check coverage on validlpSolveObject must call directly
 #
-context("lpSolve class legal values")
+context("test2: lpSolve class legal values")
 
 
 test_that("required slots have been defined", {

@@ -2,14 +2,13 @@
 # First TestThat Test
 # has lass been installed?
 
-context("Has S4 lpSolve class been installed with methods")
+context("test1: Has S4 lpSolve class been installed with methods")
 
 test_that("lpSolve Class installed", {
   X <- new("lpSolve")
   expect_true(is.object(X))
   expect_equal(class(X)[1], "lpSolve")
 })
-
 
 
 test_that("lpSolve methods installed", {
@@ -19,6 +18,6 @@ test_that("lpSolve methods installed", {
                 "\\2", mtext[grep("^Function", mtext)] )
 
   expect_true("summary" %in% fvec)
-  expect_true("print" %in% fvec)
+  expect_true("show" %in% fvec)
   expect_true("solve" %in% fvec)
 })

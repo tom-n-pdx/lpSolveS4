@@ -10,6 +10,9 @@ lpq_good <- new("lpSolve",
                 sense   = c(">=", ">="),
                 obj     = c(0, 2)
 )
+rownames(lpq_good@constraints) <- c("R1", "R2")
+colnames(lpq_good@constraints) <- c("C1", "C2")
+
 print(summary(lpq_good))
 print(lpq_good)
 validObject(lpq_good)
@@ -61,3 +64,5 @@ print(validObject(lpq_bad, test=TRUE))
 #                 obj = c(0, 2),
 #                 modelsense = "XX"
 # )
+
+

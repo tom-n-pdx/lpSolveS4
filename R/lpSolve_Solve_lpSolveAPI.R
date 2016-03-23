@@ -1,5 +1,5 @@
 #
-# Method solve for lpSolver Class using lpSolveAPI to lp_solve Program
+# Method solve for lpSolve Class using lpSolveAPI to lp_solve Program
 # use getGeneric("print") to get args list to match
 #
 
@@ -12,12 +12,12 @@
 #' @import lpSolveAPI
 #'
 
-lpSolverSolve <- function(a){
+lpSolveSolve <- function(a){
   # require(lpSolveAPI)
   object <- a
   validObject(object)
 
-  # cat("lpSolver: solve\n")
+  # cat("lpSolve: solve\n")
   nrow <- nrow(object@constraints)
   ncol <- ncol(object@constraints)
   lprec <- make.lp(nrow=nrow, ncol=ncol)
@@ -74,9 +74,10 @@ lpSolverSolve <- function(a){
   return(result)
 }
 
+#' @export
 setGeneric("solve")
 
 setMethod("solve", signature(a = "lpSolve"),
-          lpSolverSolve
+          lpSolveSolve
 )
 

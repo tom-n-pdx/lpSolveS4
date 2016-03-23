@@ -28,7 +28,6 @@ sense_legal.l <- c("", "<=", ">=", "=")
 #'        sets constraint to be free. length is 1 or nrowss of constraints
 #'
 #' @exportClass lpSolve
-#' @import methods
 
 setClass("lpSolve",
          slots = c(
@@ -46,7 +45,6 @@ setClass("lpSolve",
 
          )
 )
-
 
 
 validlpSolveObject <- function(object){
@@ -138,19 +136,74 @@ setMethod("summary", signature("lpSolve"),
 
 
 #
-# Method Print
+# Method Show
 # use getGeneric("print") to get args list to match
 #
-#' Print
+#' Show
 #'
-#' Print method lpSolve Object
+#' Show method lpSolve Object
 #'
 #' @export
 #'
-lpSolvePrint <- function(x, ...){
-  object <- x
 
-  cat("lpSolve print: ", object@modelname, "\n")
+lpSolveShow <- function(object){
+
+  cat("lpSolve show: ", object@modelname, "\n")
+
+  # Get Size
+  if (length(object@constraints) > 0){
+    col.n     <- ncol(object@constraints)
+    col.names <- colnames(object@constraints)
+    row.n     <- nrow(object@constraints)
+    row.names <- rownames(object@constraints)
+    temp_cons <- object@constraints
+  } else {
+    cat("Can't show lpSolve object with undefined constraints - falling back to debug print\n")
+    .lpSolveDebug(object)
+    return()
+  }
+
+  # Col Names
+  cat("      ", paste0(sprintf("%5.5s ", col.names), collapse=""), "\n")
+
+  # Min/Max & Objective
+  sense_str <- sprintf("%5s ", ifelse(length(object@modelsense) > 0,   object@modelsense, "max"))
+  obj_str   <- paste0(sprintf(" %5.3g", rep_len(object@obj, col.n)), collapse="")
+  cat(paste0(sense_str, obj_str, collapse=""), "\n")
+
+  # row name, constraint row, sense, rhs
+  for (i in 1:row.n){
+    name_str  <- sprintf("%5s ", row.names[i])
+    cons_str  <- paste0(sprintf(" %5.g", rep_len(temp_cons[i,], col.n)), collapse="")
+    sense_str <- sprintf(" %2s", rep_len(object@sense, row.n)[i])
+    rhs_str   <- sprintf(" %5.g", rep_len(object@rhs,   row.n)[i])
+    cat(paste0(name_str, cons_str, sense_str, rhs_str, collapse=""), "\n")
+  }
+
+  # upper & lower bounds
+  ub_str <- paste0(
+    sprintf(" %5.3g", rep_len(ifelse(length(object@ub) > 0, object@ub, Inf), col.n)),
+    collapse="")
+  cat(paste0("Upper ", ub_str, collapse=""), "\n")
+
+  lb_str <- paste0(
+    sprintf(" %5.3g", rep_len(ifelse(length(object@lb) > 0, object@lb, 0), col.n)),
+    collapse="")
+  cat(paste0("Lower ", lb_str, collapse=""), "\n")
+
+}
+
+##' @export
+#setGeneric("show")
+
+setMethod("show", signature("lpSolve"),
+  lpSolveShow
+)
+
+
+.lpSolveDebug <- function(object){
+
+  cat("lpSolve debug: ", object@modelname, "\n")
   print(object@constraints)
   for(slot_name in slotNames(object)){
     temp <- slot(object, slot_name)
@@ -160,11 +213,3 @@ lpSolvePrint <- function(x, ...){
 
 }
 
-#' @export
-setGeneric("print")
-
-setMethod("print", signature(x = "lpSolve"),
-  lpSolvePrint
-)
-
-# source("lpSolve_Solve_lpSolveAPI.R")
