@@ -1,12 +1,11 @@
 Package: lpSolveS4
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Title: Technology Forecasting using DEA (Data Envelopment Analysis)
+Version: 0.5.1
+Description: Provides a simple object oriented frontend for the lp_solve linear solver. Uses S4 type class to interface to existing lp_solve package.
+Authors@R: person("Tom", "Shott",  role = c("aut", "cre"), email="tshott@pdx.edu")
 Depends:
-    R (>= 3.1.0), lpSolveAPI
+    R (>= 3.1.0), lpSolveAPI, methods
 License: MIT + file LICENSE
 LazyData: true
-Suggests:
-    testthat
+Suggests: testthat
 RoxygenNote: 5.0.1

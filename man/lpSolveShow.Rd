@@ -6,6 +6,9 @@
 \usage{
 lpSolveShow(object)
 }
+\arguments{
+\item{object}{S4 Object to display}
+}
 \description{
 Show method lpSolve Object
 }

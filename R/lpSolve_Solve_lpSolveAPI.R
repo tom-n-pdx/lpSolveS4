@@ -6,14 +6,15 @@
 #' Solve method for lpSolve Object
 #'
 #' Using the lpSolveAPI package solves a lpSolve Object
-#' @param a lpSolve object to be solved
+#' @param a lpSolpackage 'methods' is used but not declaredve object to be solved
 #'
 #' @export
 #' @import lpSolveAPI
+#' @import methods
+#' @aliases solve
 #'
 
 lpSolveSolve <- function(a){
-  # require(lpSolveAPI)
   object <- a
   validObject(object)
 
@@ -74,10 +75,10 @@ lpSolveSolve <- function(a){
   return(result)
 }
 
-#' @export
-setGeneric("solve")
+##' @export
+#setGeneric("solve")
 
-setMethod("solve", signature(a = "lpSolve"),
+methods::setMethod("solve", signature(a = "lpSolve"),
           lpSolveSolve
 )
 

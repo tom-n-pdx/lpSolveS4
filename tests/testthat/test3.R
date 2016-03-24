@@ -20,7 +20,6 @@ test_that("check show", {
   Y@rhs         <- c(1, 2)
   expect_output(show(Y), "lpSolve debug:")
 
-
 })
 
 

@@ -1,7 +1,7 @@
 #
 #  lpSolve Class as frontend for lpSolveAPI
 #
-require(methods)
+#require(methods)
 
 #
 #
@@ -28,6 +28,7 @@ sense_legal.l <- c("", "<=", ">=", "=")
 #'        sets constraint to be free. length is 1 or nrowss of constraints
 #'
 #' @exportClass lpSolve
+#'
 
 setClass("lpSolve",
          slots = c(
@@ -63,6 +64,12 @@ validlpSolveObject <- function(object){
     if (!is.numeric(object@constraints) || length(dim(object@constraints)) != 2){
       error_msg <- paste0(error_msg, "Slot constraints must be numeric with dimensions = 2; ")
     } else {
+      #
+      # column setup
+      #
+      if (is.null(colnames(object@constraints))){
+        object@constraints
+      }
 
       # Check vars that must match ncols in constraints
       n_col <- ncol(object@constraints)
@@ -117,6 +124,8 @@ setValidity("lpSolve", validlpSolveObject)
 #'
 #' Summary method lpSolve Object
 #'
+#' @param object S4 Object to display
+#' @aliases summary
 #' @export
 #'
 lpSolveSummary <- function(object){
@@ -127,10 +136,10 @@ lpSolveSummary <- function(object){
   }
 }
 
-#' @export
-setGeneric("summary")
+##' @export
+#setGeneric("summary")
 
-setMethod("summary", signature("lpSolve"),
+methods::setMethod("summary", signature("lpSolve"),
   lpSolveSummary
 )
 
@@ -142,7 +151,7 @@ setMethod("summary", signature("lpSolve"),
 #' Show
 #'
 #' Show method lpSolve Object
-#'
+#' @param object S4 Object to display
 #' @export
 #'
 
@@ -153,9 +162,9 @@ lpSolveShow <- function(object){
   # Get Size
   if (length(object@constraints) > 0){
     col.n     <- ncol(object@constraints)
-    col.names <- colnames(object@constraints)
+    col.names <- colnames(object@constraints, do.NULL=FALSE, prefix = "C")
     row.n     <- nrow(object@constraints)
-    row.names <- rownames(object@constraints)
+    row.names <- rownames(object@constraints, do.NULL=FALSE, prefix = "R")
     temp_cons <- object@constraints
   } else {
     cat("Can't show lpSolve object with undefined constraints - falling back to debug print\n")
@@ -196,7 +205,7 @@ lpSolveShow <- function(object){
 ##' @export
 #setGeneric("show")
 
-setMethod("show", signature("lpSolve"),
+methods::setMethod("show", signature("lpSolve"),
   lpSolveShow
 )
 
