@@ -136,8 +136,8 @@ lpSolveSummary <- function(object){
   }
 }
 
-##' @export
-#setGeneric("summary")
+#' @export
+setGeneric("summary")
 
 methods::setMethod("summary", signature("lpSolve"),
   lpSolveSummary
@@ -202,8 +202,8 @@ lpSolveShow <- function(object){
 
 }
 
-##' @export
-#setGeneric("show")
+# #' @export
+# setGeneric("show")
 
 methods::setMethod("show", signature("lpSolve"),
   lpSolveShow

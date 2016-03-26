@@ -75,8 +75,8 @@ lpSolveSolve <- function(a){
   return(result)
 }
 
-##' @export
-#setGeneric("solve")
+#' @export
+setGeneric("solve")
 
 methods::setMethod("solve", signature(a = "lpSolve"),
           lpSolveSolve
