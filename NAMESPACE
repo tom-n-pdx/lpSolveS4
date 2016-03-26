@@ -3,6 +3,7 @@
 export(lpSolveShow)
 export(lpSolveSolve)
 export(lpSolveSummary)
+export(solve)
 export(summary)
 exportClasses(lpSolve)
 import(lpSolveAPI)

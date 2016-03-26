@@ -9,6 +9,7 @@
 #
 #
 sense_legal.l <- c("", "<=", ">=", "=")
+type_legal.l <- c("real", "integer", "binary")
 
 #
 # lpSolve Class - Generic S4 OOP interface to solver
@@ -33,13 +34,14 @@ sense_legal.l <- c("", "<=", ">=", "=")
 setClass("lpSolve",
          slots = c(
            modelname = "character",           # optional
-           modelsense = "character",          # optional, legal values "min" or "Max"
+           modelsense = "character",          # optional, values: "min" or "Max"
 
            constraints = "matrix",            # required, 2 dimensions
 
            obj = "numeric",                   # required - length must match constraints ncols
            lb = "numeric",                    # optional
            ub = "numeric",                    # optional
+           type = "character",                # optional - values: "real", "integer" or "binary"
 
            rhs = "numeric",                   # rqeuired - length must match constraints rows
            sense = "character"                # optional
@@ -74,7 +76,7 @@ validlpSolveObject <- function(object){
       # Check vars that must match ncols in constraints
       n_col <- ncol(object@constraints)
 
-      for (value in c("obj", "lb", "ub")){              # Check that vars are length 0, 1 or ncol
+      for (value in c("obj", "lb", "ub", "type")){      # Check that vars are length 0, 1 or ncol
         n <-length(slot(object, value))
         if (n > 0 && n!= 1 && n != n_col){
           error_msg <- paste0(error_msg, "Slot ", value,
@@ -104,6 +106,14 @@ validlpSolveObject <- function(object){
     for (i in 1:length(object@sense)){
       if (! object@sense[i] %in% sense_legal.l){
         error_msg <- paste0(error_msg, "Slot sense contains illegal value:", object@sense[i], "; ")
+      }
+    }
+  }
+
+  if (length(object@type) > 0){
+    for (i in 1:length(object@type)){
+      if (! object@type[i] %in% type_legal.l){
+        error_msg <- paste0(error_msg, "Slot type contains illegal value:", object@sense[i], "; ")
       }
     }
   }
@@ -197,7 +207,6 @@ lpSolveShow <- function(object){
   #   sprintf(" %5.3g", rep_len(ifelse(length(object@ub) > 0, object@ub, Inf), col.n)),
   #   collapse="")
   ub_str <- paste0( sprintf(" %5.3g", rep_len(object@ub, col.n)), collapse="")
-
   cat(paste0("Upper ", ub_str, collapse=""), "\n")
 
   if (length(object@lb) == 0)
@@ -208,8 +217,18 @@ lpSolveShow <- function(object){
   #   collapse="")
 
   lb_str <- paste0( sprintf(" %5.3g", rep_len(object@lb, col.n)), collapse="")
-
   cat(paste0("Lower ", lb_str, collapse=""), "\n")
+
+
+  if (length(object@type) == 0)
+    object@type <- "real"
+
+  # lb_str <- paste0(
+  #   sprintf(" %5.3g", rep_len(ifelse(length(object@lb) > 0, object@lb, 0), col.n)),
+  #   collapse="")
+
+  type_str <- paste0( sprintf(" %5s", rep_len(object@type, col.n)), collapse="")
+  cat(paste0("Type  ", type_str, collapse=""), "\n")
 
 }
 
