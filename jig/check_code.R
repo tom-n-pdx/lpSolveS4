@@ -7,8 +7,9 @@ lpq_good <- new("lpSolve",
                 modelname = "DEA CCR",
                 constraints = matrix( c(1, .25, 3, 4), nrow=2, byrow=TRUE),
                 rhs     = 7,
-                sense   = c(">=", ">="),
-                obj     = c(0, 2.5)
+                # sense   = c(">=", ">="),
+                obj     = c(0, 2.5),
+                type    = c("real", "integer")
 )
 rownames(lpq_good@constraints) <- c("R1", "R2")
 colnames(lpq_good@constraints) <- c("C1", "C2")
