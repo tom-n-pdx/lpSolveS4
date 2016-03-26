@@ -137,7 +137,7 @@ lpSolveSummary <- function(object){
 }
 
 ##' @export
-#setGeneric("summary")
+setGeneric("summary")
 
 methods::setMethod("summary", signature("lpSolve"),
   lpSolveSummary
@@ -183,27 +183,38 @@ lpSolveShow <- function(object){
   # row name, constraint row, sense, rhs
   for (i in 1:row.n){
     name_str  <- sprintf("%5s ", row.names[i])
-    cons_str  <- paste0(sprintf(" %5.g", rep_len(temp_cons[i,], col.n)), collapse="")
+    cons_str  <- paste0(sprintf(" %5.3g", rep_len(temp_cons[i,], col.n)), collapse="")
     sense_str <- sprintf(" %2s", rep_len(object@sense, row.n)[i])
-    rhs_str   <- sprintf(" %5.g", rep_len(object@rhs,   row.n)[i])
+    rhs_str   <- sprintf(" %5.3g", rep_len(object@rhs,   row.n)[i])
     cat(paste0(name_str, cons_str, sense_str, rhs_str, collapse=""), "\n")
   }
 
   # upper & lower bounds
-  ub_str <- paste0(
-    sprintf(" %5.3g", rep_len(ifelse(length(object@ub) > 0, object@ub, Inf), col.n)),
-    collapse="")
+  if (length(object@ub) == 0)
+    object@ub <- Inf
+
+  # ub_str <- paste0(
+  #   sprintf(" %5.3g", rep_len(ifelse(length(object@ub) > 0, object@ub, Inf), col.n)),
+  #   collapse="")
+  ub_str <- paste0( sprintf(" %5.3g", rep_len(object@ub, col.n)), collapse="")
+
   cat(paste0("Upper ", ub_str, collapse=""), "\n")
 
-  lb_str <- paste0(
-    sprintf(" %5.3g", rep_len(ifelse(length(object@lb) > 0, object@lb, 0), col.n)),
-    collapse="")
+  if (length(object@lb) == 0)
+    object@lb <- 0
+
+  # lb_str <- paste0(
+  #   sprintf(" %5.3g", rep_len(ifelse(length(object@lb) > 0, object@lb, 0), col.n)),
+  #   collapse="")
+
+  lb_str <- paste0( sprintf(" %5.3g", rep_len(object@lb, col.n)), collapse="")
+
   cat(paste0("Lower ", lb_str, collapse=""), "\n")
 
 }
 
-##' @export
-#setGeneric("show")
+# #' @export
+# setGeneric("show")
 
 methods::setMethod("show", signature("lpSolve"),
   lpSolveShow
