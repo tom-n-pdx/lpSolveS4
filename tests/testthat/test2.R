@@ -144,7 +144,7 @@ test_that("slots vales are correct", {
   # expect_equal(validObject(Y, test=TRUE), TRUE)
   expect_equal(validlpSolveObject(Y), TRUE)
 
-  Y@sense <- c("")                                            # legal sense value
+  Y@sense <- c("free")                                        # legal sense value
   # expect_equal(validObject(Y, test=TRUE), TRUE)
   expect_equal(validlpSolveObject(Y), TRUE)
 
@@ -160,7 +160,7 @@ test_that("slots vales are correct", {
   # expect_match(validObject(Y, test=TRUE), "illegal value")
   expect_match(validlpSolveObject(Y), "illegal value")
 
-  Y@sense <- c("b")                                           # bad sense value
+  Y@sense <- c("b")                                        # bad sense value
   # expect_match(validObject(Y, test=TRUE), "illegal value")
   expect_match(validlpSolveObject(Y), "illegal value")
 
