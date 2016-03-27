@@ -26,7 +26,7 @@ default valueis 0)}
 
 \item{\code{rhs}}{RHS constraints. type numeric. length is 1 or nrowss of constraints}
 
-\item{\code{sense}}{sense of constraints. legal values are \code{"<=", "=", ">=", ""} Blank
-sets constraint to be free. length is 1 or nrowss of constraints}
+\item{\code{sense}}{sense of constraints. legal values are \code{"<=", "=", ">=", "free"}
+length is 1 or nrowss of constraints}
 }}
 

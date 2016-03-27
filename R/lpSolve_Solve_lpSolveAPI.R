@@ -23,43 +23,37 @@ lpSolveSolve <- function(a){
   ncol <- ncol(object@constraints)
   lprec <- make.lp(nrow=nrow, ncol=ncol)
 
+  # Set constraints
   if(length(object@constraints) > 0){
     for (i in 1:ncol(object@constraints)){
       set.column(lprec, i, object@constraints[,i])
     }
   }
 
-  for(slot in c("modelname", "modelsense","obj", "lb", "ub", "sense", "rhs")){
+  # Set all other used slots
+  for(slot in c("modelname", "modelsense","obj", "lb", "ub", "sense", "rhs", "type")){
     value <- slot(object, slot)
     if (length(value) > 0){
       switch(slot,
              modelname    = {
-               name.lp(lprec, name=value)},
-
+               name.lp(lprec, name=value) },
              modelsense   = {
-               lp.control(lprec, sense=value)},
+               lp.control(lprec, sense=value) },
 
              obj = {
-               set.objfn(lprec, rep_len(value, ncol))
-             },
-
+               set.objfn(lprec, rep_len(value, ncol)) },
              lb = {
-               set.bounds(lprec, lower = rep_len(value, ncol))
-             },
-
+               set.bounds(lprec, lower = rep_len(value, ncol)) },
              ub = {
-               set.bounds(lprec, upper = rep_len(value, ncol))
-             },
+               set.bounds(lprec, upper = rep_len(value, ncol)) },
+             tyoe = {
+               set.type(lprec, rep_len(value, ncol)) },
 
              sense = {
-               set.constr.type(lprec,
-                               rep_len(match(value, sense_legal.l) - 1,
-                                       nrow))
-             },
+               set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
 
              rhs = {
-               set.constr.value(lprec, rep_len(value, nrow))
-             }
+               set.constr.value(lprec, rep_len(value, nrow)) }
       )
     }
   }
@@ -77,7 +71,6 @@ lpSolveSolve <- function(a){
 
 #' @export
 setGeneric("solve")
-
 methods::setMethod("solve", signature(a = "lpSolve"),
           lpSolveSolve
 )

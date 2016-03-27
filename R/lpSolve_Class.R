@@ -8,7 +8,8 @@
 # lpSolve Class
 #
 #
-sense_legal.l <- c("", "<=", ">=", "=")
+sense_legal.l <- c("free", "<=", ">=", "=")
+type_legal.l <- c("real", "integer", "binary")
 
 #
 # lpSolve Class - Generic S4 OOP interface to solver
@@ -24,8 +25,8 @@ sense_legal.l <- c("", "<=", ">=", "=")
 #' @slot lb lower bound. type numeric. length is 1 or ncols of constraints (optional:
 #'        default valueis 0)
 #' @slot rhs RHS constraints. type numeric. length is 1 or nrowss of constraints
-#' @slot sense sense of constraints. legal values are \code{"<=", "=", ">=", ""} Blank
-#'        sets constraint to be free. length is 1 or nrowss of constraints
+#' @slot sense sense of constraints. legal values are \code{"<=", "=", ">=", "free"}
+#'        length is 1 or nrowss of constraints
 #'
 #' @exportClass lpSolve
 #'
@@ -33,13 +34,14 @@ sense_legal.l <- c("", "<=", ">=", "=")
 setClass("lpSolve",
          slots = c(
            modelname = "character",           # optional
-           modelsense = "character",          # optional, legal values "min" or "Max"
+           modelsense = "character",          # optional, values: "min" or "Max"
 
            constraints = "matrix",            # required, 2 dimensions
 
            obj = "numeric",                   # required - length must match constraints ncols
            lb = "numeric",                    # optional
            ub = "numeric",                    # optional
+           type = "character",                # optional - values: "real", "integer" or "binary"
 
            rhs = "numeric",                   # rqeuired - length must match constraints rows
            sense = "character"                # optional
@@ -74,7 +76,7 @@ validlpSolveObject <- function(object){
       # Check vars that must match ncols in constraints
       n_col <- ncol(object@constraints)
 
-      for (value in c("obj", "lb", "ub")){              # Check that vars are length 0, 1 or ncol
+      for (value in c("obj", "lb", "ub", "type")){      # Check that vars are length 0, 1 or ncol
         n <-length(slot(object, value))
         if (n > 0 && n!= 1 && n != n_col){
           error_msg <- paste0(error_msg, "Slot ", value,
@@ -104,6 +106,14 @@ validlpSolveObject <- function(object){
     for (i in 1:length(object@sense)){
       if (! object@sense[i] %in% sense_legal.l){
         error_msg <- paste0(error_msg, "Slot sense contains illegal value:", object@sense[i], "; ")
+      }
+    }
+  }
+
+  if (length(object@type) > 0){
+    for (i in 1:length(object@type)){
+      if (! object@type[i] %in% type_legal.l){
+        error_msg <- paste0(error_msg, "Slot type contains illegal value:", object@sense[i], "; ")
       }
     }
   }
@@ -159,6 +169,13 @@ lpSolveShow <- function(object){
 
   cat("lpSolve show: ", object@modelname, "\n")
 
+  # Get digits option from environemnt
+  digits <- getOption("digits")
+  # digits <- 4
+  width  <- digits + 3
+  format_s <- paste0(" %", width, ".", width,  "s", collapse = "")
+  format_g <- paste0(" %", width, ".", digits, "g", collapse = "")
+
   # Get Size
   if (length(object@constraints) > 0){
     col.n     <- ncol(object@constraints)
@@ -173,32 +190,48 @@ lpSolveShow <- function(object){
   }
 
   # Col Names
-  cat("      ", paste0(sprintf("%5.5s ", col.names), collapse=""), "\n")
+  # cat("     ", paste0(sprintf("%5.5s ", col.names), collapse=""), "\n")
+  cat("    ", paste0(sprintf(format_s, col.names), collapse=""), "\n")
 
   # Min/Max & Objective
-  sense_str <- sprintf("%5s ", ifelse(length(object@modelsense) > 0,   object@modelsense, "max"))
-  obj_str   <- paste0(sprintf(" %5.3g", rep_len(object@obj, col.n)), collapse="")
+  sense_str <- sprintf("%5.5s", ifelse(length(object@modelsense) > 0,   object@modelsense, "max"))
+  # obj_str   <- paste0(sprintf(" %5.3g", rep_len(object@obj, col.n)), collapse="")
+  obj_str   <- paste0(sprintf(format_g, rep_len(object@obj, col.n)), collapse="")
   cat(paste0(sense_str, obj_str, collapse=""), "\n")
+
+  if (length(object@sense) == 0)
+    object@sense <- c("free")
 
   # row name, constraint row, sense, rhs
   for (i in 1:row.n){
-    name_str  <- sprintf("%5s ", row.names[i])
-    cons_str  <- paste0(sprintf(" %5.g", rep_len(temp_cons[i,], col.n)), collapse="")
-    sense_str <- sprintf(" %2s", rep_len(object@sense, row.n)[i])
-    rhs_str   <- sprintf(" %5.g", rep_len(object@rhs,   row.n)[i])
+    name_str  <- sprintf("%5.5s", row.names[i])
+    # cons_str  <- paste0(sprintf(" %5.3g", rep_len(temp_cons[i,], col.n)), collapse="")
+    cons_str  <- paste0(sprintf(format_g, rep_len(temp_cons[i,], col.n)), collapse="")
+    sense_str <- sprintf(" %4s", rep_len(object@sense, row.n)[i])
+    # rhs_str   <- sprintf(" %5.3g", rep_len(object@rhs,   row.n)[i])
+    rhs_str   <- sprintf(format_g, rep_len(object@rhs,   row.n)[i])
     cat(paste0(name_str, cons_str, sense_str, rhs_str, collapse=""), "\n")
   }
 
   # upper & lower bounds
-  ub_str <- paste0(
-    sprintf(" %5.3g", rep_len(ifelse(length(object@ub) > 0, object@ub, Inf), col.n)),
-    collapse="")
-  cat(paste0("Upper ", ub_str, collapse=""), "\n")
+  if (length(object@ub) == 0)
+    object@ub <- Inf
+  # ub_str <- paste0( sprintf(" %5.3g", rep_len(object@ub, col.n)), collapse="")
+  ub_str <- paste0( sprintf(format_g, rep_len(object@ub, col.n)), collapse="")
+  cat(paste0("Upper", ub_str, collapse=""), "\n")
 
-  lb_str <- paste0(
-    sprintf(" %5.3g", rep_len(ifelse(length(object@lb) > 0, object@lb, 0), col.n)),
-    collapse="")
-  cat(paste0("Lower ", lb_str, collapse=""), "\n")
+  if (length(object@lb) == 0)
+    object@lb <- 0
+  # lb_str <- paste0( sprintf(" %5.3g", rep_len(object@lb, col.n)), collapse="")
+  lb_str <- paste0( sprintf(format_g, rep_len(object@lb, col.n)), collapse="")
+  cat(paste0("Lower", lb_str, collapse=""), "\n")
+
+
+  if (length(object@type) == 0)
+    object@type <- "real"
+  # type_str <- paste0( sprintf(" %5.5s", rep_len(object@type, col.n)), collapse="")
+  type_str <- paste0( sprintf(format_s, rep_len(object@type, col.n)), collapse="")
+  cat(paste0("Type ", type_str, collapse=""), "\n")
 
 }
 
