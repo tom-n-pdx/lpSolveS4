@@ -110,17 +110,20 @@ test_that("slots vales are correct", {
   # Check type
   Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@type <- "real", "real")
+  # expect_equal(validObject(Y), TRUE)
   expect_equal(validlpSolveObject(Y), TRUE)
-
   expect_error(Y@type <- 2, "numeric")                      # Check bad type caught at assignment
 
   Y@type  <- c("real", "integer", "binary")                 # length = ncol in constraint OK
-  expect_equal(validlpSolveObject(Y), TRUE)                 # Check all three legalo values
+  # expect_equal(validObject(Y), TRUE)                        # Check all three legalo values
+  expect_equal(validlpSolveObject(Y), TRUE)               # Check all three legalo values
 
   Y@type  <- c("real", "real")                              # length != 1 or ncol fail
+  # expect_match(validObject(Y, test=TRUE), "ncols")
   expect_match(validlpSolveObject(Y), "ncols")
 
   Y@type  <- "bob"                                          # Character, but illegal value
+  # expect_match(validObject(Y, test=TRUE), "illegal value:bob")  # Not caught until valid check
   expect_match(validlpSolveObject(Y), "illegal value:bob")  # Not caught until valid check
 
 

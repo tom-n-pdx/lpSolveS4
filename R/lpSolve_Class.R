@@ -9,7 +9,7 @@
 #
 #
 sense_legal.l <- c("free", "<=", ">=", "=")
-type_legal.l <- c("real", "integer", "binary")
+type_legal.l  <- c("real", "integer", "binary")
 
 #
 # lpSolve Class - Generic S4 OOP interface to solver
@@ -126,6 +126,12 @@ validlpSolveObject <- function(object){
 }
 
 setValidity("lpSolve", validlpSolveObject)
+
+# #' @export
+# setGeneric("validObject")
+
+
+
 
 #
 # Method Summary

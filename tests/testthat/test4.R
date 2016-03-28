@@ -60,8 +60,6 @@ test_that("quick check works", {
   expect_equivalent(result$status, 2)
   expect_equivalent(result$variables, c(NA, NA))
 
-
-
 })
 
 
