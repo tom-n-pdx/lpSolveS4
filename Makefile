@@ -21,5 +21,12 @@ list:
 clean:
 	rm -f list*.pdf
 
+git-gc:
+	git gc --aggressive
+
+git-status:
+	git status --short
+
+
 
 
