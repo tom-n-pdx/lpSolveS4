@@ -60,6 +60,7 @@ test_that("slots vales are correct", {
   # modelsense
   Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@modelsense <- "min", "min")
+  expect_equal(Y@modelsense <- "max", "max")
   expect_error(Y@modelsense <- 2, "character")           # Check bad type caught at assignment
   expect_equal(Y@modelsense <- "bob", "bob")
 
@@ -87,7 +88,7 @@ test_that("slots vales are correct", {
 
 
 
-  # check obj, lb, ub
+  # check obj, lb, ub (numeric row sized values)
 
   for(slot in c("obj", "lb", "ub")){
     Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
@@ -105,6 +106,24 @@ test_that("slots vales are correct", {
     # expect_match(validObject(Y, test=TRUE), "ncols")
     expect_match(validlpSolveObject(Y), "ncols")
   }
+
+  # Check type
+  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+  expect_equal(Y@type <- "real", "real")
+  expect_equal(validlpSolveObject(Y), TRUE)
+
+  expect_error(Y@type <- 2, "numeric")                      # Check bad type caught at assignment
+
+  Y@type  <- c("real", "integer", "binary")                 # length = ncol in constraint OK
+  expect_equal(validlpSolveObject(Y), TRUE)                 # Check all three legalo values
+
+  Y@type  <- c("real", "real")                              # length != 1 or ncol fail
+  expect_match(validlpSolveObject(Y), "ncols")
+
+  Y@type  <- "bob"                                          # Character, but illegal value
+  expect_match(validlpSolveObject(Y), "illegal value:bob")  # Not caught until valid check
+
+
 
   # Check rhs
   Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)

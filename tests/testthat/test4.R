@@ -13,7 +13,8 @@ test_that("quick check works", {
                   constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
                   rhs     = 7,
                   sense   = c(">=", ">="),
-                  obj     = c(0, 2)
+                  obj     = c(0, 2),
+                  type    = c("real")
   )
   # print(summary(lpq_good))
   # print(lpq_good)
