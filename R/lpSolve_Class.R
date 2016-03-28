@@ -49,7 +49,7 @@ setClass("lpSolve",
          )
 )
 
-
+#' @export
 validlpSolveObject <- function(object){
 
   error_msg <- ""
@@ -113,7 +113,7 @@ validlpSolveObject <- function(object){
   if (length(object@type) > 0){
     for (i in 1:length(object@type)){
       if (! object@type[i] %in% type_legal.l){
-        error_msg <- paste0(error_msg, "Slot type contains illegal value:", object@sense[i], "; ")
+        error_msg <- paste0(error_msg, "Slot type contains illegal value:", object@type[i], "; ")
       }
     }
   }
@@ -146,7 +146,7 @@ lpSolveSummary <- function(object){
   }
 }
 
-##' @export
+#' @export
 setGeneric("summary")
 
 methods::setMethod("summary", signature("lpSolve"),

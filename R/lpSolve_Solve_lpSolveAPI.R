@@ -3,6 +3,9 @@
 # use getGeneric("print") to get args list to match
 #
 
+sense_legal.l <- c("free", "<=", ">=", "=")
+type_legal.l <- c("real", "integer", "binary")
+
 #' Solve method for lpSolve Object
 #'
 #' Using the lpSolveAPI package solves a lpSolve Object
@@ -46,14 +49,20 @@ lpSolveSolve <- function(a){
                set.bounds(lprec, lower = rep_len(value, ncol)) },
              ub = {
                set.bounds(lprec, upper = rep_len(value, ncol)) },
-             tyoe = {
-               set.type(lprec, rep_len(value, ncol)) },
+             type = {
+               # Must set one value at a time
+               for(i in 1:ncol){
+                 set.type(lprec, i, rep_len(value, ncol)[i])
+               }
+             },
 
              sense = {
                set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
 
              rhs = {
-               set.constr.value(lprec, rep_len(value, nrow)) }
+               set.constr.value(lprec, rep_len(value, nrow)) },
+
+             warning("solve dropped thru to dfeault for slot:", slot)
       )
     }
   }
@@ -62,9 +71,14 @@ lpSolveSolve <- function(a){
   # Solve
   #
   #print(lprec)
-  result <- list()
+  result            <- list()
   result$status     <- solve(lprec)
   result$variables  <- get.variables(lprec)
+
+  if (result$status != 0){
+    # if (debug >= 1) warn("Solver returned non-zero status:", result$status)
+    result$variables <- rep_len(NA, ncol)
+  }
 
   return(result)
 }
