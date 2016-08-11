@@ -1,8 +1,7 @@
 /* Copyright 2016, Gurobi Optimization, Inc. */
 
-/* Facility location: a company currently ships its product from 5 plants
-   to 4 warehouses. It is considering closing some plants to reduce
-   costs. What plant(s) should the company close, in order to minimize
+/* Facility location: a company currently ships its product from 5 plants to 4 warehouses. It is considering
+   closing some plants to reduce costs. What plant(s) should the company close, in order to minimize
    transportation and fixed costs?
 
    Based on an example from Frontline Systems:
@@ -36,8 +35,7 @@ main(int argc,
     double Capacity[] = { 20, 22, 17, 19, 18 };
 
     // Fixed costs for each plant
-    double FixedCosts[] =
-      { 12000, 15000, 17000, 13000, 16000 };
+    double FixedCosts[] = { 12000, 15000, 17000, 13000, 16000 };
 
     // Transportation costs per thousand units
     double TransCosts[][nPlants] = {
@@ -64,8 +62,7 @@ main(int argc,
       open[p].set(GRB_StringAttr_VarName, vname.str());
     }
 
-    // Transportation decision variables: how much to transport from
-    // a plant p to a warehouse w
+    // Transportation decision variables: how much to transport from a plant p to a warehouse w
     transport = new GRBVar* [nWarehouses];
     int w;
     for (w = 0; w < nWarehouses; ++w)
@@ -163,9 +160,7 @@ main(int argc,
         {
           if (transport[w][p].get(GRB_DoubleAttr_X) > 0.0001)
           {
-            cout << "  Transport " <<
-            transport[w][p].get(GRB_DoubleAttr_X) <<
-            " units to warehouse " << w << endl;
+            cout << "  Transport " << transport[w][p].get(GRB_DoubleAttr_X) << " units to warehouse " << w << endl;
           }
         }
       }

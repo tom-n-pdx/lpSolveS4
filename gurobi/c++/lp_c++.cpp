@@ -1,10 +1,8 @@
 /* Copyright 2016, Gurobi Optimization, Inc. */
 
-/* This example reads an LP model from a file and solves it.
-   If the model is infeasible or unbounded, the example turns off
-   presolve and solves the model again. If the model is infeasible,
-   the example computes an Irreducible Inconsistent Subsystem (IIS),
-   and writes it to a file */
+/* This example reads an LP model from a file and solves it.  If the model is infeasible or unbounded, the
+   example turns off presolve and solves the model again. If the model is infeasible, the example computes an
+   Irreducible Inconsistent Subsystem (IIS), and writes it to a file */
 
 #include "gurobi_c++.h"
 using namespace std;
@@ -40,14 +38,12 @@ main(int   argc,
       cout << "Model is infeasible" << endl;
 
       // compute and write out IIS
-
       model.computeIIS();
       model.write("model.ilp");
     } else if (optimstatus == GRB_UNBOUNDED) {
       cout << "Model is unbounded" << endl;
     } else {
-      cout << "Optimization was stopped with status = "
-           << optimstatus << endl;
+      cout << "Optimization was stopped with status = " << optimstatus << endl;
     }
 
   } catch(GRBException e) {

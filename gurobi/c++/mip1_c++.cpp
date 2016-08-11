@@ -39,12 +39,9 @@ main(int   argc,
     // Optimize model
     model.optimize();
 
-    cout << x.get(GRB_StringAttr_VarName) << " "
-         << x.get(GRB_DoubleAttr_X) << endl;
-    cout << y.get(GRB_StringAttr_VarName) << " "
-         << y.get(GRB_DoubleAttr_X) << endl;
-    cout << z.get(GRB_StringAttr_VarName) << " "
-         << z.get(GRB_DoubleAttr_X) << endl;
+    cout << x.get(GRB_StringAttr_VarName) << " " << x.get(GRB_DoubleAttr_X) << endl;
+    cout << y.get(GRB_StringAttr_VarName) << " " << y.get(GRB_DoubleAttr_X) << endl;
+    cout << z.get(GRB_StringAttr_VarName) << " " << z.get(GRB_DoubleAttr_X) << endl;
 
     cout << "Obj: " << model.get(GRB_DoubleAttr_ObjVal) << endl;
 

@@ -18,11 +18,18 @@ CXXFLAGS = -m64 -g -L/Library/gurobi652/mac64/lib/ -lgurobi_c++ -lgurobi65
 LDLIBS   = -lgurobi_c++ -lgurobi65
 LDFLAGS  = -L/Library/gurobi652/mac64/lib/
 
+#
+# Pretty Print Setup
+#
+#PRINT = a2ps -Pfab5517bw1 -1 --lines-per-page=80 --sides=2 --file-align=sheet -i -G
+# a2ps -PEPSON_XP_820_Series --media=Letterdj -1 --lines-per-page=80 --sides=2 --file-align=sheet -i -G
 
+# Code review - add line numbers: -C
+# PRINT = a2ps -1 --media=Letterdj --lines-per-page=80 --tabsize=2 --sides=2 --file-align=sheet -i -C -G -o-
+PRINT = a2ps -1 --lines-per-page=90 --sides=2 --file-align=sheet -i -G -o-
+# EPSON_XP_820_Series
 
-
-
-
+CODE = lp_c++.cpp mip2_c++.cpp mip1_c++.cpp diet_c++.cpp facility_c++.cpp
 
 all: lp_c++ mip2_c++ mip1_c++ diet_c++ facility_c++ \
      workforce1_c++ workforce2_c++ workforce3_c++ workforce4_c++ \
@@ -33,6 +40,11 @@ run: run_lp_c++ run_mip2_c++ run_mip1_c++ run_diet_c++ run_facility_c++ \
      run_workforce1_c++ run_workforce2_c++ run_workforce3_c++ run_workforce4_c++ \
      run_lpmod_c++ run_lpmethod_c++ run_sensitivity_c++ run_tune_c++ run_callback_c++ \
      run_callback_c++
+
+list-code:
+	$(PRINT) $(CODE) | ps2pdf - > list-code.pdf
+
+
 
 # Example 1 - Read a lp model from a file and solve, complain if infesable
 lp_c++: lp_c++.cpp
@@ -143,4 +155,4 @@ run_callback_c++: callback_c++
 	./callback_c++ /Library/gurobi652/mac64/examples/data/p0033.mps
 
 clean:
-	rm -rf *.o *_c *_c++ *.class *.log *.rlp *.lp *.bas *.ilp *.dSYM tune.prm
+	rm -rf *.o *_c *_c++ *.class *.log *.rlp *.lp *.bas *.ilp *.dSYM tune.prm list-code.pdf

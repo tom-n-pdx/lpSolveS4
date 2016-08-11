@@ -1,9 +1,7 @@
 /* Copyright 2016, Gurobi Optimization, Inc. */
 
-/* This example reads a MIP model from a file, solves it and
-   prints the objective values from all feasible solutions
-   generated while solving the MIP. Then it creates the fixed
-   model and solves that model. */
+/* This example reads a MIP model from a file, solves it and prints the objective values from all feasible
+   solutions generated while solving the MIP. Then it creates the fixed model and solves that model. */
 
 #include "gurobi_c++.h"
 #include <cmath>
@@ -47,8 +45,7 @@ main(int   argc,
       cout << "Model is unbounded" << endl;
       return 0;
     } else {
-      cout << "Optimization was stopped with status = "
-           << optimstatus << endl;
+      cout << "Optimization was stopped with status = " << optimstatus << endl;
       return 0;
     }
 
@@ -100,8 +97,7 @@ main(int   argc,
     for (int j = 0; j < numvars; j++) {
       GRBVar v = fvars[j];
       if (v.get(GRB_DoubleAttr_X) != 0.0) {
-        cout << v.get(GRB_StringAttr_VarName) << " "
-             << v.get(GRB_DoubleAttr_X) << endl;
+        cout << v.get(GRB_StringAttr_VarName) << " " << v.get(GRB_DoubleAttr_X) << endl;
       }
     }
 
