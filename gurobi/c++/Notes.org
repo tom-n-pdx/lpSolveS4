@@ -1,0 +1,26 @@
+
+* Setting up Gurobi on Mac for C++
+
+  1. Followed quick start guide [[http://www.gurobi.com/documentation/6.5/quickstart_mac/software_installation_guid.html#section:Installation][Gurobi Mac Quickstart]] to install license
+     1. Download and installed software
+     2. Installed to /Library/gurobi650/mac64
+     3. After logging in, goto [[http://user.gurobi.com/download/licenses/current][licenses]] to get license info
+     4. Be VPN'ed into pdx.edu
+     5. Activate license following directions from license page
+     6. Run gurobi.sh in a shell to confirm it works
+     7. To evaluate a model: gurobi_cl coins.lp
+     8. To evaluate it, and get a file of the values of variables: gurobi_cl ResultFile=coins.sol coins.lp
+     9. Use [[http://www.gurobi.com/documentation/6.5/quickstart_mac/reading_and_optimizing_a_m.html][interactive shell]] to solve model & play with it
+  2. Now try the C++ examples - in /Library/gurobi650/mac64/examples/c++
+     1. Have to hack make file in build dir
+
+
+
+
+
+
+
+
+
+
+
