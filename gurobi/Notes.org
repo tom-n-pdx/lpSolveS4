@@ -13,6 +13,17 @@
      9. Use [[http://www.gurobi.com/documentation/6.5/quickstart_mac/reading_and_optimizing_a_m.html][interactive shell]] to solve model & play with it
   2. Now try the C++ examples - in /Library/gurobi650/mac64/examples/c++
      1. Have to hack make file in build dir
+  3. Try R Examples
+     1. Install the R package from the Gurobi dir install.packages('/Library/gurobi652/mac64/R/gurobi_6.5-2.tgz', repos=NULL)
+     2. Also install "slam" package
+
+* Thoughts on Gurobi
+  * It uses the lp file format. Might be good idea to debug via creating a lp file and load and solve.
+  * Need to experiment with how can write out a file
+  * The interface is basically a list - easy to deal with.
+  * Does have ablity to tune system via paramaters, basis, start location.
+  * Is there a way to find all solutions?
+  *  
 
 
 
