@@ -1,0 +1,53 @@
+
+* Solvers Available
+
+** lpsolve
+   
+
+* Benchmarks
+
+** [[http://plato.asu.edu/bench.html][ASU Benchmarks]]
+   Gurobi		  42	 1
+   CLP			  42	 1
+   GLOP			 326     7
+   GLPK			1843	43
+   lpSolve		5028   120
+   
+
+* Solvers
+  Looking at the solvers, I must support the academic Gurobi solver.
+
+  For open source, GLOP may make the most sense - otherwise GLPK
+
+
+
+** Gurobi
+
+
+** CLP - https://projects.coin-or.org/Clp
+
+
+** GLOP - https://developers.google.com/optimization/
+   * Includes C++ / python interfaces to GLOP, plus CBC, CLP, GLPK, Gurobi, CPLEX, SCIP, and Sulum.
+
+
+** GLPK - https://www.gnu.org/software/glpk/glpk.html
+   * Open source, C interface only
+
+
+** lpSolve
+   * Oldest solver
+
+
+* Phase?
+
+  * Simple DEA
+
+  * DEA setting everything up with data to iterate on
+
+  * Implement inner loop in C
+
+  * Make inner lope parallel
+
+  * Use abstracted interface to solver - ROI?
+
