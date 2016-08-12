@@ -1,0 +1,23 @@
+
+* Using GLPK
+
+  1. Use dpkg -L libglpk-dev to see where everything is
+  2. To list everything installed  dpkg --get-selections | grep -i glpk
+     * libglph-dev
+       /usr/lib/x86_64-linux-gnu/libglpk.a
+       /usr/share/doc/libglpk-dev
+       /usr/include/glpk.h
+       /usr/lib/x86_64-linux-gnu/libglpk.so
+     * glpk-doc
+       /usr/share/doc/glpk-doc
+       /usr/share/doc-base/glpk*
+
+   3. No c/c++ examples are included
+      https://en.wikibooks.org/wiki/GLPK/Using_the_GLPK_callable_library - c code
+      http://stackoverflow.com/questions/20335885/using-glpk-in-parallel-for-loop - C++
+      C example in manual
+
+
+       
+
+     
