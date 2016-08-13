@@ -3,7 +3,7 @@
 
 ** lpsolve
    
-
+   
 * Benchmarks
 
 ** [[http://plato.asu.edu/bench.html][ASU Benchmarks]]
@@ -24,7 +24,7 @@
 ** Gurobi
 
 
-** CLP - https://projects.coin-or.org/Clp
+** CLP - https://projects.coin-or.org/Clp AKA Coin-OT
 
 
 ** GLOP - https://developers.google.com/optimization/
@@ -33,15 +33,21 @@
 
 ** GLPK - https://www.gnu.org/software/glpk/glpk.html
    * Open source, C interface only
-
+   * Not threaded. Make each object a separate thread.
+   * Not thread safe.
+   * Almost reenter - needs few patches
 
 ** lpSolve
    * Oldest solver
+   * Can run threaded - but each need a lpSolve object for each thread
+
 
 
 * Phase?
 
   * Simple DEA
+
+  * code with foreach?
 
   * DEA setting everything up with data to iterate on
 
@@ -51,3 +57,20 @@
 
   * Use abstracted interface to solver - ROI?
 
+  * Multicore vs. multi-machine?
+
+  * Idea - built a R data structure that represents the problem to be solved.
+    * Send the structure and the indexs of the DMU's to solve for to each machine.
+    * Figure out how big it needs to be to solve on multuple machines
+    * Implement the code with an inner apply loop
+    
+
+  * Experiment on single phase version with small, medium & large data
+    * Input: x, y, orientation, rts
+      * Phase 2 - xt, yt
+    * Output: eff, lambda
+      * Phase 2 - dual
+    * control: debug
+
+    
+  
