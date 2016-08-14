@@ -46,9 +46,19 @@ setClass("lpSolve",
            rhs = "numeric",                   # rqeuired - length must match constraints rows
            sense = "character",               # optional
 
-           ptr = "list"
+           env = "environment"
          )
 )
+
+# setMethod("initialize",
+#           "lpSolve", function(.Object, ...) {
+#     env <- new.env(parent=emptyenv())
+#     # env$myData <- myData
+#     callNextMethod(.Object, env=env, ...)
+#     .Object
+# })
+
+
 
 #' @export
 validlpSolveObject <- function(object){
