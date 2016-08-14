@@ -14,8 +14,8 @@ test_that("quick check works", {
                   rhs     = 7,
                   sense   = c(">=", ">="),
                   obj     = c(0, 2),
-                  type    = c("real"),
-                  env     = new.env(parent=emptyenv())
+                  type    = c("real")
+#                  env     = new.env(parent=emptyenv())
   )
   # print(summary(lpq_good))
   # print(lpq_good)
@@ -35,8 +35,8 @@ test_that("quick check works", {
                   sense   = c(">=", ">="),
                   obj     = c(0, 2, 3),
                   lb      = c(-Inf),
-                  ub      = c(20),
-                  env     = new.env(parent=emptyenv())
+                  ub      = c(20)
+#                  env     = new.env(parent=emptyenv())
   )
   # print(summary(lpq_good))
   # print(lpq_good)
@@ -53,8 +53,8 @@ test_that("quick check works", {
                   rhs     = 7,
                   sense   = c(">=", ">="),
                   obj     = c(0, 2),
-                  type    = c("binary"),
-                  env     = new.env(parent=emptyenv())
+                  type    = c("binary")
+                  # env     = new.env(parent=emptyenv())
   )
   # print(summary(lpq_good))
   # print(lpq_good)

@@ -25,12 +25,12 @@ lpSolveSolve <- function(a){
   nrow <- nrow(object@constraints)
   ncol <- ncol(object@constraints)
 
-  if(is.null(object@env$lprec)){
-    lprec <- make.lp(nrow=nrow, ncol=ncol)
-    object@env$lprec <- lprec
-  } else {
-    lprec <- object@env$lprec
-  }
+  #if(is.null(object@env$lprec)){
+  lprec <- make.lp(nrow=nrow, ncol=ncol)
+  #object@env$lprec <- lprec
+  #} else {
+  #lprec <- object@env$lprec
+  #}
 
   # Set constraints
   if(length(object@constraints) > 0){

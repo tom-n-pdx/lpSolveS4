@@ -50,14 +50,13 @@ setClass("lpSolve",
          )
 )
 
-# setMethod("initialize",
-#           "lpSolve", function(.Object, ...) {
-#     env <- new.env(parent=emptyenv())
-#     # env$myData <- myData
-#     callNextMethod(.Object, env=env, ...)
-#     .Object
-# })
+setMethod("initialize",
+          "lpSolve", function(.Object, ...) {
+            .Object@env <- new.env(parent=emptyenv())
+            .Object <- callNextMethod(.Object, ...)
 
+            .Object
+          })
 
 
 #' @export
@@ -261,7 +260,6 @@ methods::setMethod("show", signature("lpSolve"),
 
 
 .lpSolveDebug <- function(object){
-
   cat("lpSolve debug: ", object@modelname, "\n")
   print(object@constraints)
   for(slot_name in slotNames(object)){
@@ -269,6 +267,5 @@ methods::setMethod("show", signature("lpSolve"),
     if (length(temp) > 0)
       cat(slot_name, "\t", temp, "\n")
   }
-
 }
 
