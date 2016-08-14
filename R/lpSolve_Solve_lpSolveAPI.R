@@ -24,6 +24,7 @@ lpSolveSolve <- function(a){
   # cat("lpSolve: solve\n")
   nrow <- nrow(object@constraints)
   ncol <- ncol(object@constraints)
+
   lprec <- make.lp(nrow=nrow, ncol=ncol)
 
   # Set constraints

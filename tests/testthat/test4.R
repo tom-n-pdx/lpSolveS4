@@ -24,6 +24,7 @@ test_that("quick check works", {
   expect_equivalent(result$status, 0)
   expect_equivalent(result$variables, c(7, 0))
 
+
   # Long tests set all values
   lpq_good <- new("lpSolve",
                   modelname = "DEA CCR",

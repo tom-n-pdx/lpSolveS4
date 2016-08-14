@@ -44,8 +44,9 @@ setClass("lpSolve",
            type = "character",                # optional - values: "real", "integer" or "binary"
 
            rhs = "numeric",                   # rqeuired - length must match constraints rows
-           sense = "character"                # optional
+           sense = "character",               # optional
 
+           ptr = "list"
          )
 )
 
