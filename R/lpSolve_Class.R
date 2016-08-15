@@ -3,6 +3,8 @@
 #
 #require(methods)
 
+# ToDo
+# * add a setcol, setrhs to set values, update
 #
 #
 # lpSolve Class
@@ -31,6 +33,13 @@ type_legal.l  <- c("real", "integer", "binary")
 #' @exportClass lpSolve
 #'
 
+#
+# TRICK - Warning
+# Need to keep a ptr to solver data structure and set durring assignment.
+# Becuase of pass by value - can't change when on RHS of assignment.
+# The use of the enviorment as part of class is a hack to this problem.
+# It can be modified, even when using obj on RHS of assignment.
+#
 setClass("lpSolve",
          slots = c(
            modelname = "character",           # optional
@@ -50,6 +59,10 @@ setClass("lpSolve",
          )
 )
 
+#
+# Must initialize to new environment. Otherwise every lpSolve object created would
+# point to only one lpSolve structure.
+#
 setMethod("initialize",
           "lpSolve", function(.Object, ...) {
             .Object@env <- new.env(parent=emptyenv())

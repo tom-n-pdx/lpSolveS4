@@ -2,9 +2,10 @@
 # Method solve for lpSolve Class using lpSolveAPI to lp_solve Program
 # use getGeneric("print") to get args list to match
 #
+# Add check - if model size different - change size - resize.lp
 
 sense_legal.l <- c("free", "<=", ">=", "=")
-type_legal.l <- c("real", "integer", "binary")
+type_legal.l  <- c("real", "integer", "binary")
 
 #' Solve method for lpSolve Object
 #'
@@ -25,12 +26,12 @@ lpSolveSolve <- function(a){
   nrow <- nrow(object@constraints)
   ncol <- ncol(object@constraints)
 
-  #if(is.null(object@env$lprec)){
-  lprec <- make.lp(nrow=nrow, ncol=ncol)
-  #object@env$lprec <- lprec
-  #} else {
-  #lprec <- object@env$lprec
-  #}
+  if(is.null(object@env$lprec)){
+    lprec <- make.lp(nrow=nrow, ncol=ncol)
+    object@env$lprec <- lprec
+  } else {
+    lprec <- object@env$lprec
+  }
 
   # Set constraints
   if(length(object@constraints) > 0){
@@ -39,7 +40,7 @@ lpSolveSolve <- function(a){
     }
   }
 
-  # Set all other used slots
+  # Set all other used slots listed
   for(slot in c("modelname", "modelsense","obj", "lb", "ub", "sense", "rhs", "type")){
     value <- slot(object, slot)
     if (length(value) > 0){
@@ -48,7 +49,6 @@ lpSolveSolve <- function(a){
                name.lp(lprec, name=value) },
              modelsense   = {
                lp.control(lprec, sense=value) },
-
              obj = {
                set.objfn(lprec, rep_len(value, ncol)) },
              lb = {
@@ -61,10 +61,8 @@ lpSolveSolve <- function(a){
                  set.type(lprec, i, rep_len(value, ncol)[i])
                }
              },
-
              sense = {
                set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
-
              rhs = {
                set.constr.value(lprec, rep_len(value, nrow)) },
 
