@@ -1,4 +1,20 @@
 
+* Try
+** RcppParallel Package code
+   * Parallel implementation of Rcpp
+   * Can't access any R code from within the code
+   * Safe for access to lpSolve lib? probably not
+
+** Design a Interface to solvers   
+   * Look at ROI code as examples of building plug-ins
+
+** Try reference Class as alternative to S4
+   * Try refrence class
+   * Maybe easier then S4 environment hack
+   * [[http://adv-r.had.co.nz/R5.html][R5]], [[http://adv-r.had.co.nz/OO-essentials.html#rc][RC]]
+   * Better yet - try R6 classes - support private data
+
+
 * Solvers Available
 
 ** lpsolve
