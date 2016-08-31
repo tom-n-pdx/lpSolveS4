@@ -19,22 +19,23 @@ lpSolveR6 <- R6Class("lpSolveR6",
     # ncol        = NULL,
     # nrow        = NULL,
 
-    modelsense  = "max",
-    modelname   = "",
+    modelsense  = "max",                          # optional, min or max
+    modelname   = "",                             # optional, text
 
-    A           = NULL,
+    A           = NULL,                           # constraints, numeric, required ncols x nrows
 
-    obj         = 0,
-    lb          = 0,
-    ub          = Inf,
-    type        = "real",
+    obj         = NA,                             # required, numeric, length = ncols
+    lb          = 0,                              # optional, numeric, length = ncols
+    ub          = Inf,                            # optional, numeric, length = ncols
+    type        = "real",                         # optional, valid type, length = ncols
 
-    rhs         = 0,
-    sense       = "free",
+    rhs         = 0,                              # required, numeric, length = nrows
+    sense       = "free",                         # optional, valid type, length = nrows
 
 
-    initialize = function(A=NA, obj=0, rhs=0, sense="free", modelsense="max", modelname="",
-                          lb = 0, ub=Inf, type="real") {
+    initialize = function(A=matrix(NA, 0, 0), obj=0, rhs=0, sense="free",
+                          lb = 0, ub=Inf, type="real",
+                          modelsense="max", modelname="") {
 
       self$modelsense   <- modelsense
       self$modelname    <- modelname
