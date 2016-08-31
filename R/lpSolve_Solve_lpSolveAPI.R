@@ -3,6 +3,7 @@
 # use getGeneric("print") to get args list to match
 #
 # Add check - if model size different - change size - resize.lp
+require(lpSolveAPI)
 
 sense_legal.l <- c("free", "<=", ">=", "=")
 type_legal.l  <- c("real", "integer", "binary")
@@ -19,13 +20,15 @@ type_legal.l  <- c("real", "integer", "binary")
 #'
 
 lpSolveSolve <- function(a){
+
   object <- a
   validObject(object)
 
   # cat("lpSolve: solve\n")
-  nrow <- nrow(object@constraints)
-  ncol <- ncol(object@constraints)
+  nrow <- nrow(object@A)
+  ncol <- ncol(object@A)
 
+  # Check if the solver object has already been defined
   if(is.null(object@env$lprec)){
     lprec <- make.lp(nrow=nrow, ncol=ncol)
     object@env$lprec <- lprec
@@ -34,9 +37,10 @@ lpSolveSolve <- function(a){
   }
 
   # Set constraints
-  if(length(object@constraints) > 0){
-    for (i in 1:ncol(object@constraints)){
-      set.column(lprec, i, object@constraints[,i])
+  # Warning - this clears the objfun - but reset later
+  if(length(object@A) > 0){
+    for (i in 1:ncol(object@A)){
+      set.column(lprec, i, object@A[,i])
     }
   }
 
@@ -92,4 +96,61 @@ setGeneric("solve")
 methods::setMethod("solve", signature(a = "lpSolve"),
           lpSolveSolve
 )
+
+#
+# Return Dual
+#
+lpSolveDual <- function(object){
+
+  # Check if the solver object has already been defined - should be if getting duals
+  if(is.null(object@env$lprec)){
+    stop("Solve LP first")
+  }
+
+  lprec <- object@env$lprec
+
+  result            <- list()
+  result$dual       <- get.dual.solution(lprec)
+
+  return(result)
+}
+
+#' @export
+setGeneric("getDual",
+           function(object)
+             standardGeneric("getDual")
+)
+
+methods::setMethod("getDual", signature(object = "lpSolve"),
+                   definition = lpSolveDual
+)
+
+#
+# Return Basis
+#
+lpSolveBasis <- function(object){
+
+  # Check if the solver object has already been defined - should be if getting duals
+  if(is.null(object@env$lprec)){
+    stop("Solve LP first")
+  }
+
+  lprec <- object@env$lprec
+
+  result            <- list()
+  result$basis      <- get.basis(lprec)
+
+  return(result)
+}
+
+#' @export
+setGeneric("getBasis",
+           function(object)
+             standardGeneric("getBasis")
+)
+
+methods::setMethod("getBasis", signature(object = "lpSolve"),
+                   definition = lpSolveBasis
+)
+
 

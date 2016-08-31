@@ -64,7 +64,7 @@ a <- lpSolveR6$new(modelname = "DEA Env Input", modelsense = "max",
 
 a
 str(a)
-a$show(digits = 8)
+a$show(digits = 4)
 
 # Print
 
