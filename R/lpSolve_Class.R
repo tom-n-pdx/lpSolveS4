@@ -3,6 +3,7 @@
 #
 #require(methods)
 
+
 # ToDo
 # * add a setcol, setrhs to set values, update
 #
@@ -13,6 +14,7 @@
 sense_legal.l <- c("free", "<=", ">=", "=")
 type_legal.l  <- c("real", "integer", "binary")
 
+
 #
 # lpSolve Class - Generic S4 OOP interface to solver
 #
@@ -20,7 +22,7 @@ type_legal.l  <- c("real", "integer", "binary")
 #'
 #' @slot modelname name for model, type character (optional)
 #' @slot modelsense model sense. legal values are \code{min, max} (optional: default max)
-#' @slot constraints model constraints. numeric matrix
+#' @slot A model constraints. numeric matrix
 #' @slot obj objective function. type numeric. length is 1 or ncols of constraints
 #' @slot ub upper bound. type numeric. length is 1 or ncols of constraints (optional:
 #'        default value is Inf)
@@ -45,7 +47,7 @@ setClass("lpSolve",
            modelname = "character",           # optional
            modelsense = "character",          # optional, values: "min" or "Max"
 
-           constraints = "matrix",            # required, 2 dimensions
+           A = "matrix",            # required, 2 dimensions
 
            obj = "numeric",                   # required - length must match constraints ncols
            lb = "numeric",                    # optional
@@ -78,26 +80,26 @@ validlpSolveObject <- function(object){
   error_msg <- ""
   # Check required vars set
 
-  for (value in c(c("constraints", "obj", "rhs"))){
+  for (value in c(c("A", "obj", "rhs"))){
     if (length(slot(object, value)) < 1){
       error_msg <- paste0(error_msg, "Required slot ", value, " uninitialized; ")
     }
   }
 
   # If constraints defined make sure is 2 dimensions
-  if (length(object@constraints) > 0){
-    if (!is.numeric(object@constraints) || length(dim(object@constraints)) != 2){
+  if (length(object@A) > 0){
+    if (!is.numeric(object@A) || length(dim(object@A)) != 2){
       error_msg <- paste0(error_msg, "Slot constraints must be numeric with dimensions = 2; ")
     } else {
       #
       # column setup
       #
-      if (is.null(colnames(object@constraints))){
-        object@constraints
+      if (is.null(colnames(object@A))){
+        object@A
       }
 
       # Check vars that must match ncols in constraints
-      n_col <- ncol(object@constraints)
+      n_col <- ncol(object@A)
 
       for (value in c("obj", "lb", "ub", "type")){      # Check that vars are length 0, 1 or ncol
         n <-length(slot(object, value))
@@ -108,7 +110,7 @@ validlpSolveObject <- function(object){
       }
 
       # Check vars that must match nrows in constraints
-      n_row <- nrow(object@constraints)
+      n_row <- nrow(object@A)
 
       for (value in c("sense", "rhs")){                 # Check that vars are length 0, 1 or ncol
         n <-length(slot(object, value))
@@ -154,8 +156,6 @@ setValidity("lpSolve", validlpSolveObject)
 # setGeneric("validObject")
 
 
-
-
 #
 # Method Summary
 #
@@ -170,8 +170,8 @@ setValidity("lpSolve", validlpSolveObject)
 lpSolveSummary <- function(object){
 
   cat("lpSolve: ", object@modelname, "\n")
-  if (length(dim(object@constraints)) == 2){
-    cat("Linear Solver: ", nrow(object@constraints), " X ", ncol(object@constraints), "\n")
+  if (length(dim(object@A)) == 2){
+    cat("Linear Solver: ", nrow(object@A), " X ", ncol(object@A), "\n")
   }
 }
 
@@ -198,20 +198,19 @@ lpSolveShow <- function(object){
 
   cat("lpSolve show: ", object@modelname, "\n")
 
-  # Get digits option from environemnt
   digits <- getOption("digits")
-  # digits <- 4
+
   width  <- digits + 3
   format_s <- paste0(" %", width, ".", width,  "s", collapse = "")
   format_g <- paste0(" %", width, ".", digits, "g", collapse = "")
 
   # Get Size
-  if (length(object@constraints) > 0){
-    col.n     <- ncol(object@constraints)
-    col.names <- colnames(object@constraints, do.NULL=FALSE, prefix = "C")
-    row.n     <- nrow(object@constraints)
-    row.names <- rownames(object@constraints, do.NULL=FALSE, prefix = "R")
-    temp_cons <- object@constraints
+  if (length(object@A) > 0){
+    col.n     <- ncol(object@A)
+    col.names <- colnames(object@A, do.NULL=FALSE, prefix = "C")
+    row.n     <- nrow(object@A)
+    row.names <- rownames(object@A, do.NULL=FALSE, prefix = "R")
+    temp_cons <- object@A
   } else {
     cat("Can't show lpSolve object with undefined constraints - falling back to debug print\n")
     .lpSolveDebug(object)
@@ -274,7 +273,7 @@ methods::setMethod("show", signature("lpSolve"),
 
 .lpSolveDebug <- function(object){
   cat("lpSolve debug: ", object@modelname, "\n")
-  print(object@constraints)
+  print(object@A)
   for(slot_name in slotNames(object)){
     temp <- slot(object, slot_name)
     if (length(temp) > 0)

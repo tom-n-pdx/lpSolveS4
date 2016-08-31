@@ -8,7 +8,7 @@ context("test3: lpSolve show")
 test_that("check show", {
 
   Y <- new("lpSolve")
-  Y@constraints <- array(0, c(2,3))
+  Y@A <- array(0, c(2,3))
   Y@obj         <- c(1, 2, 3)
   Y@rhs         <- c(1, 2)
   # print(Y)
@@ -28,7 +28,7 @@ context("test3: lpSolve summary")
 test_that("check summary", {
 
   Y <- new("lpSolve")
-  Y@constraints <- array(0, c(2,3))
+  Y@A <- array(0, c(2,3))
   Y@obj         <- c(1, 2, 3)
   Y@rhs         <- c(1, 2)
   # summary(Y)

@@ -9,7 +9,7 @@ test_that("required slots have been defined", {
   X <- new("lpSolve")
 
   Y <- X
-  Y@constraints <- array(0, c(2,3))
+  Y@A <- array(0, c(2,3))
   Y@obj         <- c(1, 2, 3)
   Y@rhs         <- c(1, 2)
   # expect_equal(validObject(Y, test = TRUE), TRUE)
@@ -17,17 +17,17 @@ test_that("required slots have been defined", {
 
 
   Y <- X
-  # Y@constraints <- array(0, c(2,3))
+  # Y@A <- array(0, c(2,3))
   Y@obj     <- c(1, 2, 3)
   Y@rhs     <- c(1, 2)
 
   # check     <- validObject(Y, test = TRUE)
   check     <- validlpSolveObject(Y)
   expect_true(check != TRUE)
-  expect_match(check, "*constraints*")
+  expect_match(check, "*A*")
 
   Y <- X
-  Y@constraints <- array(0, c(2,3))
+  Y@A <- array(0, c(2,3))
   # Y@obj         <- c(1, 2, 3)
   Y@rhs         <- c(1, 2)
 
@@ -38,7 +38,7 @@ test_that("required slots have been defined", {
 
 
   Y <- X
-  Y@constraints <- array(0, c(2,3))
+  Y@A <- array(0, c(2,3))
   Y@obj         <- c(1, 2, 3)
   # Y@rhs         <- c(1, 2)
 
@@ -53,12 +53,12 @@ test_that("required slots have been defined", {
 test_that("slots vales are correct", {
 
   # modelname -
-  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+  Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@modelname <- "Good", "Good")
   expect_error(Y@modelname <- 2, "character")           # Check bad type caught at assignment
 
   # modelsense
-  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+  Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@modelsense <- "min", "min")
   expect_equal(Y@modelsense <- "max", "max")
   expect_error(Y@modelsense <- 2, "character")           # Check bad type caught at assignment
@@ -72,26 +72,26 @@ test_that("slots vales are correct", {
 
 
   # constraints
-  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
-  expect_equal(Y@constraints <- array(0, c(2,2)),      array(0, c(2,2)))
-  expect_error(Y@constraints <- "b",                    "matrix")
+  Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
+  expect_equal(Y@A <- array(0, c(2,2)),      array(0, c(2,2)))
+  expect_error(Y@A <- "b",                    "matrix")
 
-  Y@constraints <- array("b", c(2, 2))                        # caught at test, not assign
+  Y@A <- array("b", c(2, 2))                        # caught at test, not assign
   # check <- validObject(Y, test = TRUE)
   check <- validlpSolveObject(Y)
   expect_true(check != TRUE)
   expect_match(check, "numeric")
 
-  expect_error(Y@constraints <- 2,  "matrix")                 # single values, not legal
-  expect_error(Y@constraints <- c(2, 2, 2),  "matrix")        # vector not legal
-  expect_error(Y@constraints <- array(2, c(2, 2, 2)),  "matrix")  # 3d not legal
+  expect_error(Y@A <- 2,  "matrix")                 # single values, not legal
+  expect_error(Y@A <- c(2, 2, 2),  "matrix")        # vector not legal
+  expect_error(Y@A <- array(2, c(2, 2, 2)),  "matrix")  # 3d not legal
 
 
 
   # check obj, lb, ub (numeric row sized values)
 
   for(slot in c("obj", "lb", "ub")){
-    Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+    Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
     expect_equal(slot(Y, slot) <- 2, 2)
     # expect_equal(validObject(Y, test=TRUE), TRUE)
     expect_equal(validlpSolveObject(Y), TRUE)
@@ -108,7 +108,7 @@ test_that("slots vales are correct", {
   }
 
   # Check type
-  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+  Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@type <- "real", "real")
   # expect_equal(validObject(Y), TRUE)
   expect_equal(validlpSolveObject(Y), TRUE)
@@ -129,7 +129,7 @@ test_that("slots vales are correct", {
 
 
   # Check rhs
-  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+  Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@rhs <- 2, 2)
   # expect_equal(validObject(Y, test=TRUE), TRUE)
   expect_equal(validlpSolveObject(Y), TRUE)
@@ -146,7 +146,7 @@ test_that("slots vales are correct", {
 
 
   # Check sense
-  Y <- new("lpSolve", constraints = array(0, c(2,3)), obj=1, rhs=1)
+  Y <- new("lpSolve", A = array(0, c(2,3)), obj=1, rhs=1)
   expect_equal(Y@sense <- "=", "=")
   # expect_equal(validObject(Y, test=TRUE), TRUE)
   expect_equal(validlpSolveObject(Y), TRUE)

@@ -14,7 +14,7 @@
 
 \item{\code{modelsense}}{model sense. legal values are \code{min, max} (optional: default max)}
 
-\item{\code{constraints}}{model constraints. numeric matrix}
+\item{\code{A}}{model constraints. numeric matrix}
 
 \item{\code{obj}}{objective function. type numeric. length is 1 or ncols of constraints}
 

@@ -10,7 +10,7 @@ test_that("quick check works", {
   # Short minimal test
   lpq_good <- new("lpSolve",
                   # modelname = "DEA CCR",
-                  constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
+                  A = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
                   rhs     = 7,
                   sense   = c(">=", ">="),
                   obj     = c(0, 2),
@@ -30,7 +30,7 @@ test_that("quick check works", {
   lpq_good <- new("lpSolve",
                   modelname = "DEA CCR",
                   modelsense = "min",
-                  constraints = matrix( c(4, 5, 6, 7, 8, 9), nrow=2, byrow=TRUE),
+                  A = matrix( c(4, 5, 6, 7, 8, 9), nrow=2, byrow=TRUE),
                   rhs     = 7,
                   sense   = c(">=", ">="),
                   obj     = c(0, 2, 3),
@@ -49,7 +49,7 @@ test_that("quick check works", {
   # Test using binary vars that is infessable
   lpq_good <- new("lpSolve",
                   # modelname = "DEA CCR",
-                  constraints = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
+                  A = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
                   rhs     = 7,
                   sense   = c(">=", ">="),
                   obj     = c(0, 2),
