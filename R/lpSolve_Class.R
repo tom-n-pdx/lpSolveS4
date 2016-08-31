@@ -261,8 +261,8 @@ lpSolveShow <- function(object){
   # type_str <- paste0( sprintf(" %5.5s", rep_len(object@type, col.n)), collapse="")
   type_str <- paste0( sprintf(format_s, rep_len(object@type, col.n)), collapse="")
   cat(paste0("Type ", type_str, collapse=""), "\n")
-
 }
+
 
 # #' @export
 # setGeneric("show")
