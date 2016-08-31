@@ -143,14 +143,14 @@ lpSolveBasis <- function(object){
   return(result)
 }
 
-#' #' @export
-#' setGeneric("getBasis",
-#'            function(object)
-#'              standardGeneric("getBasis")
-#' )
-#'
-#' methods::setMethod("getBasis", signature(object = "lpSolve"),
-#'                    definition = getBasis
-#' )
-#'
+#' @export
+setGeneric("getBasis",
+           function(object)
+             standardGeneric("getBasis")
+)
+
+methods::setMethod("getBasis", signature(object = "lpSolve"),
+                   definition = lpSolveBasis
+)
+
 
