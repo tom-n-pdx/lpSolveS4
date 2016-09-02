@@ -5,6 +5,17 @@
 # Add check - if model size different - change size - resize.lp
 require(lpSolveAPI)
 
+#
+# Add solve error codes
+#
+
+#
+# This is ineffecient - always reloads the whole LP eqn. If it was smarter - would only update
+# the values that have changed.
+#
+
+
+
 sense_legal.l <- c("free", "<=", ">=", "=")
 type_legal.l  <- c("real", "integer", "binary")
 
@@ -44,8 +55,10 @@ lpSolveSolve <- function(a){
     }
   }
 
+
+  # workaround for lpSolveAPI bug - must set sense after rhs to have free vars set correct
   # Set all other used slots listed
-  for(slot in c("modelname", "modelsense","obj", "lb", "ub", "sense", "rhs", "type")){
+  for(slot in c("modelname", "modelsense","obj", "lb", "ub", "rhs", "type", "sense")){
     value <- slot(object, slot)
     if (length(value) > 0){
       switch(slot,
@@ -66,7 +79,8 @@ lpSolveSolve <- function(a){
                }
              },
              sense = {
-               set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
+               set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow))
+               cat("constr value", rep_len(match(value, sense_legal.l) - 1, nrow), "\n") },
              rhs = {
                set.constr.value(lprec, rep_len(value, nrow)) },
 

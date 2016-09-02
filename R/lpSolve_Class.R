@@ -3,9 +3,6 @@
 #
 #require(methods)
 
-
-# ToDo
-# * add a setcol, setrhs to set values, update
 #
 #
 # lpSolve Class
@@ -40,24 +37,24 @@ type_legal.l  <- c("real", "integer", "binary")
 # Need to keep a ptr to solver data structure and set durring assignment.
 # Becuase of pass by value - can't change when on RHS of assignment.
 # The use of the enviorment as part of class is a hack to this problem.
-# It can be modified, even when using obj on RHS of assignment.
+# It can be modified, even when using the obj on right side of an assignment.
 #
 setClass("lpSolve",
          slots = c(
            modelname = "character",           # optional
            modelsense = "character",          # optional, values: "min" or "Max"
 
-           A = "matrix",            # required, 2 dimensions
+           A    = "matrix",                   # constraint required, 2 dimensions
 
-           obj = "numeric",                   # required - length must match constraints ncols
-           lb = "numeric",                    # optional
-           ub = "numeric",                    # optional
+           obj  = "numeric",                  # required - length must match constraints ncols
+           lb   = "numeric",                  # optional
+           ub   = "numeric",                  # optional
            type = "character",                # optional - values: "real", "integer" or "binary"
 
-           rhs = "numeric",                   # rqeuired - length must match constraints rows
-           sense = "character",               # optional
+           rhs  = "numeric",                  # rqeuired - length must match constraints rows
+           sense = "character",               # optional, must be legal sense value
 
-           env = "environment"
+           env  = "environment"
          )
 )
 

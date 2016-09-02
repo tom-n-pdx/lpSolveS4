@@ -66,4 +66,34 @@ print(validObject(lpq_bad, test=TRUE))
 #                 modelsense = "XX"
 # )
 
+lpq_good <- new("lpSolve",
+                modelsense = "max",
+                obj   = c(143, 60),
+                A = matrix(
+                  c(120, 210,
+                    110,  30,
+                    1,   1), nrow=3, byrow=TRUE),
+                rhs   = c(15000, 4000, 75)
+)
+
+
+lpq_good <- new("lpSolve",
+                modelname = "lpSolve EX-1",
+                modelsense = "max",
+                obj   = c(143, 60),
+                A = matrix(
+                  c(120, 210,
+                    110,  30,
+                    1,   1), nrow=3, byrow=TRUE),
+                rhs   = c(15000, 4000, 75),
+                sense = c("<=")
+)
+
+
+validObject(lpq_good)
+result <- solve(lpq_good)
+expect_equal(result$variables, c(21.875, 53.125), tolerance = .002)
+
+
+
 
