@@ -46,6 +46,28 @@ test_that("quick check works", {
   expect_equal(result$variables, c(20.00000, 20.00000, -28.83333), tolerance = .002)
 
 
+  #
+  # Example from lpSolve Doc Page: http://web.mit.edu/lpsolve/doc/formulate.htm
+  #
+  lpq_good <- new("lpSolve",
+                  modelname = "lpSolve EX-1",
+                  modelsense = "max",
+                  obj   = c(143, 60),
+                  A = matrix(
+                    c(120, 210,
+                      110,  30,
+                        1,   1), nrow=3, byrow=TRUE),
+                  rhs   = c(15000, 4000, 75),
+                  sense = c("<=")
+  )
+
+
+  validObject(lpq_good)
+  result <- solve(lpq_good)
+  expect_equal(result$variables, c(21.875, 53.125), tolerance = .002)
+
+
+
   # Test using binary vars that is infessable
   lpq_good <- new("lpSolve",
                   # modelname = "DEA CCR",
