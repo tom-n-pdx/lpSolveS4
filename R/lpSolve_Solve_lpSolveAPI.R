@@ -79,8 +79,7 @@ lpSolveSolve <- function(a){
                }
              },
              sense = {
-               set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow))
-               cat("constr value", rep_len(match(value, sense_legal.l) - 1, nrow), "\n") },
+               set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
              rhs = {
                set.constr.value(lprec, rep_len(value, nrow)) },
 
