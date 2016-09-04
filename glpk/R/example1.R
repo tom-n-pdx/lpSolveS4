@@ -90,4 +90,16 @@ delProbGLPK(lp)
 # print GLPK Paramaters
 # help(glpkConstants)
 
+#
+# Setting up GLPK sense and rhs - different
+#
+# GLP_FR  Inf  < x <  Inf         Free Vars
+# GLP_LO   lb <= X <  Inf         Variable with lower bound
+# GLP_UP  -Inf < x <= ub          Variable with upper bound
+# GLP_DB   lb <= x <= ub          Double-bounded variable
+# GLP_FX   lb  = x =  ub          Fixed variable
 
+# free -> GLP_FR, lb  NA     ub NA
+# >=   -> GLP_LO, lb <- rhs, ub
+# <=   -> GLP_UP, lb  NA,    ub <- rhs
+# =    -> GLP_FX, lb rhs,    ub <- RHS

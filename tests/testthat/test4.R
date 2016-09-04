@@ -12,7 +12,7 @@ test_that("quick check works", {
                   # modelname = "DEA CCR",
                   A = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
                   rhs     = 7,
-                  sense   = c(">=", ">="),
+                  sense   = c("<=", "<="),
                   obj     = c(0, 2),
                   type    = c("real")
 #                  env     = new.env(parent=emptyenv())
@@ -23,7 +23,7 @@ test_that("quick check works", {
   result <- solve(lpq_good)
   #print(result)
   expect_equivalent(result$status, 0)
-  expect_equivalent(result$variables, c(7, 0))
+  expect_equivalent(result$variables, c(0, 1.75))
 
 
   # Long tests set all values

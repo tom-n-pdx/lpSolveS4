@@ -1,22 +1,19 @@
 #
-# Method solve for lpSolve Class using lpSolveAPI to lp_solve Program
+# Method solve for lpSolve Class using glpkAPI to lp_solve Program
 # use getGeneric("print") to get args list to match
 #
-# Add check - if model size different - change size - resize.lp
-require(lpSolveAPI)
+#
+require(glpkAPI)
 
 # ToDo
-# * Add solve error codes
-# * Add a debug option to print lprec directly
-
-#
-# This is ineffecient - always reloads the whole LP eqn. If it was smarter - would only update
-# the values that have changed.
-#
+# * add names for rows & cols
 
 
-sense_legal.l <- c("free", "<=", ">=", "=")
+sense_legal.l <- c("free",  "<=",   ">=",   "=")
+sense_glpk.l  <- c(GLP_FR,  GLP_UP, GLP_LO, GLP_FX)
+
 type_legal.l  <- c("real", "integer", "binary")
+type_glpk.l   <- c(GLP_CV,  GLP_IV,   GLP_IV)
 
 #' Solve method for lpSolve Object
 #'
@@ -24,7 +21,7 @@ type_legal.l  <- c("real", "integer", "binary")
 #' @param a lpSolpackage 'methods' is used but not declaredve object to be solved
 #'
 #' @export
-#' @import lpSolveAPI
+#' @import glpkAPI
 #' @import methods
 #' @aliases solve
 #'
@@ -39,18 +36,19 @@ lpSolveSolve <- function(a){
 
   # Check if the solver object has already been defined
   # If not defined, create a new one and store value in env
-  if(is.null(object@env$lprec)){
-    lprec <- make.lp(nrow=nrow, ncol=ncol)
-    object@env$lprec <- lprec
+  # Create prob & setup cols & rows
+  if(is.null(object@env$prob)){
+    prob <- initProbGLPK()
+    object@env$prob <- prob
+    addRowsGLPK(prob, nrow)
+    addColsGLPK(prob, ncol)
   } else {
-    lprec <- object@env$lprec
+    prob <- object@env$prob
   }
 
-  update_slots <- c("modelname", "modelsense", "A", "obj", "lb", "ub", "rhs", "type", "sense")
+  # update_slots <- c("modelname", "modelsense", "A", "obj", "lb", "ub", "rhs", "type", "sense")
+  update_slots <- c("modelname", "modelsense", "obj", "rhs", "ub", "A", "type")
 
-  # WARNING: workaround for lpSolveAPI bug - must set sense after rhs to have free vars set
-  # correctly.
-  #
   for(slot in update_slots){
     value <- slot(object, slot)
 
@@ -59,46 +57,67 @@ lpSolveSolve <- function(a){
 
     switch(slot,
            modelname    = {
-             name.lp(lprec, name=value) },
+             setProbNameGLPK(prob, value)  },
            modelsense   = {
-             lp.control(lprec, sense=value) },
-           A = {
-             for (i in 1:ncol){
-               set.column(lprec, i, object@A[,i])
-             } },
-           obj = {
-             set.objfn(lprec, rep_len(value, ncol)) },
-           lb = {
-             set.bounds(lprec, lower = rep_len(value, ncol)) },
-           ub = {
-             set.bounds(lprec, upper = rep_len(value, ncol)) },
-           type = {
-             # Must set one value at a time
-             for(i in 1:ncol){
-               set.type(lprec, i, rep_len(value, ncol)[i])
-             }
-           },
-           sense = {
-             set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
-           rhs = {
-             set.constr.value(lprec, rep_len(value, nrow)) },
+             value_glpk <- ifelse(value == "max", GLP_MAX, GLP_MIN)
+             setObjDirGLPK(prob, value_glpk) },
 
-           warning("solve dropped thru to dfeault for slot:", slot)
+          A = {
+             for (i in 1:ncol){
+               setMatColGLPK(prob, i, nrow, c(1:nrow), object@A[,i])
+             } },
+
+          obj = {
+             setObjCoefsGLPK(prob, c(1:ncol), object@obj)  },
+
+
+          rhs = {
+            ub    <- rep_len(object@rhs,  nrow)
+            lb    <- rep_len(object@rhs,  nrow)
+
+            sense.i <- match(rep_len(object@sense, nrow), sense_legal.l)
+            sense_glpk <- sense_glpk.l[sense.i]
+            setRowsBndsGLPK(prob, c(1:nrow), lb, ub, sense_glpk) },
+
+          ub = {
+            ub      <- rep_len(object@ub, ncol)
+            lb      <- rep_len(object@lb, ncol)
+            # type.i  <- match(rep_len(object@type, ncol), type_legal.l)
+            # type_glpk <- type_glpk.l[type.i]
+            cat("lb:", lb, "ub:", ub, "1:ncol", c(1:ncol), "\n")
+
+            setColsBndsGLPK(prob, c(1:ncol), lb, ub, type=NULL)
+
+            for(i in c(1:ncol)){
+              cat("i: ", i, "ub:", getColsUppBndsGLPK(prob, i), "\n")
+            }  },
+
+          type = {
+            type.i  <- match(rep_len(value, ncol), type_legal.l)
+            type_glpk <- type_glpk.l[type.i]
+
+            setColsKindGLPK(prob, c(1:ncol), type_glpk) },
+
+
+            warning("solve dropped thru to dfeault for slot:", slot)
     )
   }
-
   #
-  # Solve
-  #
-  #print(lprec)
+  # #
+  # # Solve
+  # # Must solve for simplex and then solve for integer...
+  # #print(lprec)
   result            <- list()
-  result$status     <- solve(lprec)
-  result$variables  <- get.variables(lprec)
+  result$status     <- solveSimplexGLPK(prob)
+  result$status     <- solveMIPGLPK(prob)
 
-  if (result$status != 0){
-    # if (debug >= 1) warn("Solver returned non-zero status:", result$status)
-    result$variables <- rep_len(NA, ncol)
-  }
+  result$variables  <- getColsPrimGLPK(prob)
+  result$variables  <- mipColsValGLPK(lpq_good@env$prob)
+  #
+  # if (result$status != 0){
+  #   # if (debug >= 1) warn("Solver returned non-zero status:", result$status)
+  #   result$variables <- rep_len(NA, ncol)
+  # }
 
   return(result)
 }

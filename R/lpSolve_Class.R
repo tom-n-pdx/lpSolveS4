@@ -54,7 +54,17 @@ setClass("lpSolve",
            rhs  = "numeric",                  # rqeuired - length must match constraints rows
            sense = "character",               # optional, must be legal sense value
 
+           solved = "logical",
            env  = "environment"
+         ),
+          # Setup default values for optional paramaters
+         prototype = list(
+           modelsense = "max",
+           lb = 0,
+           ub = Inf,
+           type = "real",
+           sense = "free",
+           solved = FALSE
          )
 )
 
@@ -124,6 +134,7 @@ validlpSolveObject <- function(object){
     error_msg <- paste0(error_msg, "modelsense Not min or max; ")
   }
 
+  # Make not loop
   if (length(object@sense) > 0){
     for (i in 1:length(object@sense)){
       if (! object@sense[i] %in% sense_legal.l){
@@ -196,67 +207,50 @@ lpSolveShow <- function(object){
   cat("lpSolve show: ", object@modelname, "\n")
 
   digits <- getOption("digits")
+  # digits=4
 
   width  <- digits + 3
+  format_b <- "%5.5s"
   format_s <- paste0(" %", width, ".", width,  "s", collapse = "")
   format_g <- paste0(" %", width, ".", digits, "g", collapse = "")
 
-  # Get Size
-  if (length(object@A) > 0){
-    col.n     <- ncol(object@A)
-    col.names <- colnames(object@A, do.NULL=FALSE, prefix = "C")
-    row.n     <- nrow(object@A)
-    row.names <- rownames(object@A, do.NULL=FALSE, prefix = "R")
-    temp_cons <- object@A
-  } else {
+  # Check that A is defined & has two dimensions
+  if (is.null(object@A) || length(object@A) < 1 || length(dim(matrix(NA, 2 ,2))) < 2){
     cat("Can't show lpSolve object with undefined constraints - falling back to debug print\n")
     .lpSolveDebug(object)
     return()
   }
 
+  col.n     <- ncol(object@A)
+  col.names <- colnames(object@A, do.NULL=FALSE, prefix = "C")
+
+  row.n     <- nrow(object@A)
+  row.names <- rownames(object@A, do.NULL=FALSE, prefix = "R")
+
   # Col Names
-  # cat("     ", paste0(sprintf("%5.5s ", col.names), collapse=""), "\n")
-  cat("    ", paste0(sprintf(format_s, col.names), collapse=""), "\n")
+  cat(sprintf(format_b, ""), sprintf(format_s, col.names), "\n", sep="")
 
   # Min/Max & Objective
-  sense_str <- sprintf("%5.5s", ifelse(length(object@modelsense) > 0,   object@modelsense, "max"))
-  # obj_str   <- paste0(sprintf(" %5.3g", rep_len(object@obj, col.n)), collapse="")
-  obj_str   <- paste0(sprintf(format_g, rep_len(object@obj, col.n)), collapse="")
-  cat(paste0(sense_str, obj_str, collapse=""), "\n")
-
-  if (length(object@sense) == 0)
-    object@sense <- c("free")
+  obj_str   <- sprintf(format_g, rep_len(object@obj, col.n))
+  cat(sprintf(format_b, object@modelsense), obj_str, "\n", sep="")
 
   # row name, constraint row, sense, rhs
   for (i in 1:row.n){
-    name_str  <- sprintf("%5.5s", row.names[i])
-    # cons_str  <- paste0(sprintf(" %5.3g", rep_len(temp_cons[i,], col.n)), collapse="")
-    cons_str  <- paste0(sprintf(format_g, rep_len(temp_cons[i,], col.n)), collapse="")
-    sense_str <- sprintf(" %4s", rep_len(object@sense, row.n)[i])
-    # rhs_str   <- sprintf(" %5.3g", rep_len(object@rhs,   row.n)[i])
+    cons_str  <- sprintf(format_g, object@A[i,])
+    sense_str <- sprintf(" %4s",   rep_len(object@sense, row.n)[i])
     rhs_str   <- sprintf(format_g, rep_len(object@rhs,   row.n)[i])
-    cat(paste0(name_str, cons_str, sense_str, rhs_str, collapse=""), "\n")
+    cat(sprintf(format_b, row.names[i]), cons_str, sense_str, rhs_str, "\n", sep="")
   }
 
-  # upper & lower bounds
-  if (length(object@ub) == 0)
-    object@ub <- Inf
-  # ub_str <- paste0( sprintf(" %5.3g", rep_len(object@ub, col.n)), collapse="")
-  ub_str <- paste0( sprintf(format_g, rep_len(object@ub, col.n)), collapse="")
-  cat(paste0("Upper", ub_str, collapse=""), "\n")
+  # upper & lower bounds & variable type
+  ub_str <- sprintf(format_g, rep_len(object@ub, col.n))
+  cat(sprintf(format_b, "Upper"), ub_str, "\n", sep="")
 
-  if (length(object@lb) == 0)
-    object@lb <- 0
-  # lb_str <- paste0( sprintf(" %5.3g", rep_len(object@lb, col.n)), collapse="")
-  lb_str <- paste0( sprintf(format_g, rep_len(object@lb, col.n)), collapse="")
-  cat(paste0("Lower", lb_str, collapse=""), "\n")
+  lb_str <- sprintf(format_g, rep_len(object@lb, col.n))
+  cat(sprintf(format_b, "Lower"), lb_str, "\n", sep="")
 
-
-  if (length(object@type) == 0)
-    object@type <- "real"
-  # type_str <- paste0( sprintf(" %5.5s", rep_len(object@type, col.n)), collapse="")
-  type_str <- paste0( sprintf(format_s, rep_len(object@type, col.n)), collapse="")
-  cat(paste0("Type ", type_str, collapse=""), "\n")
+  type_str <- sprintf(format_s, rep_len(object@type, col.n))
+  cat(sprintf(format_b,"Type"), type_str, "\n", sep="")
 }
 
 
