@@ -9,7 +9,7 @@
 #
 #
 sense_legal.l <- c("free", "<=", ">=", "=")
-type_legal.l  <- c("real", "integer", "binary")
+# type_legal.l  <- c("real", "integer", "binary")
 
 
 #
@@ -49,7 +49,7 @@ setClass("lpSolve",
            obj  = "numeric",                  # required - length must match constraints ncols
            lb   = "numeric",                  # optional
            ub   = "numeric",                  # optional
-           type = "character",                # optional - values: "real", "integer" or "binary"
+#            type = "character",                # optional - values: "real", "integer" or "binary"
 
            rhs  = "numeric",                  # rqeuired - length must match constraints rows
            sense = "character",               # optional, must be legal sense value
@@ -62,7 +62,7 @@ setClass("lpSolve",
            modelsense = "max",
            lb = 0,
            ub = Inf,
-           type = "real",
+#           type = "real",
            sense = "free",
            solved = FALSE
          )
@@ -108,8 +108,9 @@ validlpSolveObject <- function(object){
       # Check vars that must match ncols in constraints
       n_col <- ncol(object@A)
 
-      for (value in c("obj", "lb", "ub", "type")){      # Check that vars are length 0, 1 or ncol
-        n <-length(slot(object, value))
+      # for (value in c("obj", "lb", "ub", "type")){      # Check that vars are length 0, 1 or ncol
+      for (value in c("obj", "lb", "ub")){      # Check that vars are length 0, 1 or ncol
+          n <-length(slot(object, value))
         if (n > 0 && n!= 1 && n != n_col){
           error_msg <- paste0(error_msg, "Slot ", value,
                               " length is not = 1 or ncols in constraints; ")
@@ -143,13 +144,13 @@ validlpSolveObject <- function(object){
     }
   }
 
-  if (length(object@type) > 0){
-    for (i in 1:length(object@type)){
-      if (! object@type[i] %in% type_legal.l){
-        error_msg <- paste0(error_msg, "Slot type contains illegal value:", object@type[i], "; ")
-      }
-    }
-  }
+  # if (length(object@type) > 0){
+  #   for (i in 1:length(object@type)){
+  #     if (! object@type[i] %in% type_legal.l){
+  #       error_msg <- paste0(error_msg, "Slot type contains illegal value:", object@type[i], "; ")
+  #     }
+  #   }
+  # }
 
   status <- TRUE
   if (nchar(error_msg) > 0){
@@ -249,8 +250,8 @@ lpSolveShow <- function(object){
   lb_str <- sprintf(format_g, rep_len(object@lb, col.n))
   cat(sprintf(format_b, "Lower"), lb_str, "\n", sep="")
 
-  type_str <- sprintf(format_s, rep_len(object@type, col.n))
-  cat(sprintf(format_b,"Type"), type_str, "\n", sep="")
+  # type_str <- sprintf(format_s, rep_len(object@type, col.n))
+  # cat(sprintf(format_b,"Type"), type_str, "\n", sep="")
 }
 
 

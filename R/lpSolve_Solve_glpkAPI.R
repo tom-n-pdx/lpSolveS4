@@ -2,6 +2,11 @@
 # Method solve for lpSolve Class using glpkAPI to lp_solve Program
 # use getGeneric("print") to get args list to match
 #
+# ToDo:
+# * get integer, binary variables to work - alternative, disable throughout
+# * how to set/get basis
+# * How to deal with what type solving, what type simplex to use
+# * Hide all this stuff behind the api
 #
 require(glpkAPI)
 
@@ -46,7 +51,6 @@ lpSolveSolve <- function(a){
     prob <- object@env$prob
   }
 
-  # update_slots <- c("modelname", "modelsense", "A", "obj", "lb", "ub", "rhs", "type", "sense")
   update_slots <- c("modelname", "modelsense", "obj", "rhs", "ub", "A", "type")
 
   for(slot in update_slots){
@@ -82,22 +86,12 @@ lpSolveSolve <- function(a){
           ub = {
             ub      <- rep_len(object@ub, ncol)
             lb      <- rep_len(object@lb, ncol)
-            # type.i  <- match(rep_len(object@type, ncol), type_legal.l)
-            # type_glpk <- type_glpk.l[type.i]
-            cat("lb:", lb, "ub:", ub, "1:ncol", c(1:ncol), "\n")
-
-            setColsBndsGLPK(prob, c(1:ncol), lb, ub, type=NULL)
-
-            for(i in c(1:ncol)){
-              cat("i: ", i, "ub:", getColsUppBndsGLPK(prob, i), "\n")
-            }  },
+            setColsBndsGLPK(prob, c(1:ncol), lb, ub, type=NULL) },
 
           type = {
             type.i  <- match(rep_len(value, ncol), type_legal.l)
             type_glpk <- type_glpk.l[type.i]
-
             setColsKindGLPK(prob, c(1:ncol), type_glpk) },
-
 
             warning("solve dropped thru to dfeault for slot:", slot)
     )
@@ -109,10 +103,10 @@ lpSolveSolve <- function(a){
   # #print(lprec)
   result            <- list()
   result$status     <- solveSimplexGLPK(prob)
-  result$status     <- solveMIPGLPK(prob)
+  # result$status     <- solveMIPGLPK(prob)
 
   result$variables  <- getColsPrimGLPK(prob)
-  result$variables  <- mipColsValGLPK(lpq_good@env$prob)
+  # result$variables  <- mipColsValGLPK(lpq_good@env$prob)
   #
   # if (result$status != 0){
   #   # if (debug >= 1) warn("Solver returned non-zero status:", result$status)
@@ -134,14 +128,14 @@ methods::setMethod("solve", signature(a = "lpSolve"),
 lpSolveDual <- function(object){
 
   # Check if the solver object has already been defined - should be if getting duals
-  if(is.null(object@env$lprec)){
+  if(is.null(object@env$prob)){
     stop("Solve LP first")
   }
 
-  lprec <- object@env$lprec
+  prob <- object@env$prob
 
   result            <- list()
-  result$dual       <- get.dual.solution(lprec)
+  result$dual       <- getColsDualIptGLPK(prob)
 
   return(result)
 }
@@ -157,19 +151,19 @@ methods::setMethod("getDual", signature(object = "lpSolve"),
 )
 
 #
-# Return Dual Values from Solved Equation
+# Return Values from Solved Equation
 #
 lpSolveVariables <- function(object){
 
   # Check if the solver object has already been defined - should be if getting variables
-  if(is.null(object@env$lprec)){
+  if(is.null(object@env$prob)){
     stop("Solve LP first")
   }
 
-  lprec <- object@env$lprec
+  prob <- object@env$prob
 
   result            <- list()
-  result$variables  <- get.variables(lprec)
+  result$variables  <- getColsPrimGLPK(prob)
 
   return(result)
 }
@@ -185,34 +179,34 @@ methods::setMethod("getVariables", signature(object = "lpSolve"),
 )
 
 
-
 #
-# Return Basis
+# #
+# # Return Basis
+# #
+# lpSolveBasis <- function(object){
 #
-lpSolveBasis <- function(object){
-
-  # Check if the solver object has already been defined - should be if getting duals
-  if(is.null(object@env$lprec)){
-    stop("Solve LP first")
-  }
-
-  lprec <- object@env$lprec
-
-  result            <- list()
-  result$basis      <- get.basis(lprec)
-
-  return(result)
-}
-
-
-#' @export
-setGeneric("getBasis",
-           function(object)
-             standardGeneric("getBasis")
-)
-
-methods::setMethod("getBasis", signature(object = "lpSolve"),
-                   definition = lpSolveBasis
-)
-
-
+#   # Check if the solver object has already been defined - should be if getting duals
+#   if(is.null(object@env$lprec)){
+#     stop("Solve LP first")
+#   }
+#
+#   lprec <- object@env$lprec
+#
+#   result            <- list()
+#   result$basis      <- get.basis(lprec)
+#
+#   return(result)
+# }
+#
+#
+# #' @export
+# setGeneric("getBasis",
+#            function(object)
+#              standardGeneric("getBasis")
+# )
+#
+# methods::setMethod("getBasis", signature(object = "lpSolve"),
+#                    definition = lpSolveBasis
+# )
+#
+#

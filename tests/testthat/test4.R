@@ -1,7 +1,7 @@
 #
 # Test legal values
-#
-#
+# ToDo
+# * tests for dual, get variables
 context("test4: lpSolve solve using lpSolveAPI")
 
 
@@ -13,9 +13,9 @@ test_that("quick check works", {
                   A = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
                   rhs     = 7,
                   sense   = c("<=", "<="),
-                  obj     = c(0, 2),
-                  type    = c("real")
-#                  env     = new.env(parent=emptyenv())
+#                  type    = c("real"),
+                  obj     = c(0, 2)
+                  #                  env     = new.env(parent=emptyenv())
   )
   # print(summary(lpq_good))
   # print(lpq_good)
@@ -68,23 +68,23 @@ test_that("quick check works", {
 
 
 
-  # Test using binary vars that is infessable
-  lpq_good <- new("lpSolve",
-                  # modelname = "DEA CCR",
-                  A = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
-                  rhs     = 7,
-                  sense   = c(">=", ">="),
-                  obj     = c(0, 2),
-                  type    = c("binary")
-                  # env     = new.env(parent=emptyenv())
-  )
-  # print(summary(lpq_good))
-  # print(lpq_good)
-  validObject(lpq_good)
-  result <- solve(lpq_good)
-  #print(result)
-  expect_equivalent(result$status, 2)
-  expect_equivalent(result$variables, c(NA, NA))
+  # # Test using binary vars that is infessable
+  # lpq_good <- new("lpSolve",
+  #                 # modelname = "DEA CCR",
+  #                 A = matrix( c(1, 2, 3, 4), nrow=2, byrow=TRUE),
+  #                 rhs     = 7,
+  #                 sense   = c(">=", ">="),
+  #                 obj     = c(0, 2),
+  #                 type    = c("binary")
+  #                 # env     = new.env(parent=emptyenv())
+  # )
+  # # print(summary(lpq_good))
+  # # print(lpq_good)
+  # validObject(lpq_good)
+  # result <- solve(lpq_good)
+  # #print(result)
+  # expect_equivalent(result$status, 2)
+  # expect_equivalent(result$variables, c(NA, NA))
 
 })
 

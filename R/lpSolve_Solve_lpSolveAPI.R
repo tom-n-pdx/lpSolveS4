@@ -16,7 +16,7 @@ require(lpSolveAPI)
 
 
 sense_legal.l <- c("free", "<=", ">=", "=")
-type_legal.l  <- c("real", "integer", "binary")
+# type_legal.l  <- c("real", "integer", "binary")
 
 #' Solve method for lpSolve Object
 #'
@@ -46,10 +46,10 @@ lpSolveSolve <- function(a){
     lprec <- object@env$lprec
   }
 
-  update_slots <- c("modelname", "modelsense", "A", "obj", "lb", "ub", "rhs", "type", "sense")
+  update_slots <- c("modelname", "modelsense", "A", "obj", "lb", "ub", "rhs", "sense")
 
   # WARNING: workaround for lpSolveAPI bug - must set sense after rhs to have free vars set
-  # correctly.
+  # correctly. Also must set obj after A.
   #
   for(slot in update_slots){
     value <- slot(object, slot)
@@ -72,12 +72,12 @@ lpSolveSolve <- function(a){
              set.bounds(lprec, lower = rep_len(value, ncol)) },
            ub = {
              set.bounds(lprec, upper = rep_len(value, ncol)) },
-           type = {
-             # Must set one value at a time
-             for(i in 1:ncol){
-               set.type(lprec, i, rep_len(value, ncol)[i])
-             }
-           },
+           # type = {
+           #   # Must set one value at a time
+           #   for(i in 1:ncol){
+           #     set.type(lprec, i, rep_len(value, ncol)[i])
+           #   }
+           # },
            sense = {
              set.constr.type(lprec, rep_len(match(value, sense_legal.l) - 1, nrow)) },
            rhs = {
@@ -167,33 +167,33 @@ methods::setMethod("getVariables", signature(object = "lpSolve"),
 
 
 
+# #
+# # Return Basis
+# #
+# lpSolveBasis <- function(object){
 #
-# Return Basis
+#   # Check if the solver object has already been defined - should be if getting duals
+#   if(is.null(object@env$lprec)){
+#     stop("Solve LP first")
+#   }
 #
-lpSolveBasis <- function(object){
-
-  # Check if the solver object has already been defined - should be if getting duals
-  if(is.null(object@env$lprec)){
-    stop("Solve LP first")
-  }
-
-  lprec <- object@env$lprec
-
-  result            <- list()
-  result$basis      <- get.basis(lprec)
-
-  return(result)
-}
-
-
-#' @export
-setGeneric("getBasis",
-           function(object)
-             standardGeneric("getBasis")
-)
-
-methods::setMethod("getBasis", signature(object = "lpSolve"),
-                   definition = lpSolveBasis
-)
-
+#   lprec <- object@env$lprec
+#
+#   result            <- list()
+#   result$basis      <- get.basis(lprec)
+#
+#   return(result)
+# }
+#
+#
+# #' @export
+# setGeneric("getBasis",
+#            function(object)
+#              standardGeneric("getBasis")
+# )
+#
+# methods::setMethod("getBasis", signature(object = "lpSolve"),
+#                    definition = lpSolveBasis
+# )
+#
 
